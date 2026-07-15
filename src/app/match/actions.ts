@@ -12,13 +12,20 @@
  * since a Server Action is a single roundtrip), a compatibility reading is
  * one `Compat` object, not a stream of cards — so, like `dailyFortune`
  * (`today/lib.ts`), it's fine to await the interpreter directly here.
+ *
+ * Cost control (PRD §11, FIX-report.md item 1): every submission pays for
+ * one LLM compatibility generation, so it's rate-limited (per-session +
+ * per-IP) right after the self-profile check, before doing any chart math
+ * or hitting the interpreter.
  */
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { computeChart } from "@/lib/bazi";
 import { db } from "@/lib/db";
 import { cityLabel, findCityById, resolveTimezone } from "@/lib/geocode";
 import { getInterpreter } from "@/lib/interpreter/interpreter";
 import type { Chart } from "@/lib/interpreter/types";
+import { checkDualRateLimit, getClientIp, rateLimitMessage } from "@/lib/rate-limit";
 import { BirthFormSchema, resolveBirthInput } from "@/lib/reading/birth-schema";
 import { getSessionUserId } from "@/lib/session";
 import { computeRelationFacts } from "./lib";
@@ -48,12 +55,19 @@ export async function createCompatibility(
     return { error: NO_SELF_PROFILE_ERROR };
   }
 
+  const headersList = await headers();
+  const rateLimit = checkDualRateLimit("compat", userId, getClientIp(headersList));
+  if (!rateLimit.allowed) {
+    return { error: rateLimitMessage("compat") };
+  }
+
   const raw = {
     name: (formData.get("name") as string | null) ?? "",
     date: (formData.get("date") as string | null) ?? "",
     time: (formData.get("time") as string | null) ?? "",
     timeUnknown: (formData.get("timeUnknown") as string | null) ?? "",
     cityId: (formData.get("cityId") as string | null) ?? "",
+    gender: (formData.get("gender") as string | null) ?? "",
   };
 
   const parsed = BirthFormSchema.safeParse(raw);
@@ -90,6 +104,7 @@ export async function createCompatibility(
       lat: city.lat,
       lng: city.lng,
       tzId,
+      gender: resolved.gender,
     });
 
     const relationFacts = computeRelationFacts(chartA, chartB);
@@ -103,6 +118,7 @@ export async function createCompatibility(
       lat: city.lat,
       lng: city.lng,
       tzId,
+      gender: resolved.gender,
       cityLabel: cityLabel(city),
       chart: chartB,
     };

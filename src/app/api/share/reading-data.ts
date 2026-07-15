@@ -13,10 +13,20 @@
  * `id`, not a separate reading id) — there's no dedicated "reading detail"
  * route in this app, `/reading/[id]` always shows the latest Reading for
  * that profile, so the share card follows the same convention.
+ *
+ * STRICTLY READ-ONLY (FIX-report.md item 2): this used to call
+ * `interpreter.natalReading()` and `db.reading.create()` when no reading
+ * existed yet — meaning any unauthenticated visitor (or a link-preview bot
+ * auto-fetching a pasted URL's OG image) could trigger a full, uncapped LLM
+ * generation just by requesting a share image for a profile that never
+ * finished `/reading/[id]`. That's now removed entirely: a missing reading
+ * simply returns `null`, and the caller (`/api/share/[type]/[id]`,
+ * `opengraph-image.tsx`) renders the branded fallback card instead.
+ * Generation stays exclusive to the session-owner-gated
+ * `/api/reading/[profileId]/stream` route.
  */
 import { db } from "@/lib/db";
 import { ELEMENT_LABEL } from "@/lib/interpreter/five-elements";
-import { getInterpreter } from "@/lib/interpreter/interpreter";
 import type { Card, Chart } from "@/lib/interpreter/types";
 import type { ReadingCardData } from "./render";
 
@@ -31,26 +41,12 @@ export async function loadReadingCardData(profileId: string): Promise<ReadingCar
     where: { profileId },
     orderBy: { generatedAt: "desc" },
   });
+  // No reading has been generated for this profile yet (e.g. a share link
+  // opened before the owner finished the natal-reading page) — return null
+  // rather than generating one; see this file's header.
+  if (!existing) return null;
 
-  let cards: Card[];
-  if (existing) {
-    cards = JSON.parse(existing.cards) as Card[];
-  } else {
-    // No reading has been generated for this profile yet (e.g. a share
-    // link opened before the owner finished the natal-reading page).
-    // `natalReading()` is the Interpreter contract's non-streaming
-    // one-shot method (the streaming route uses the same interpreter,
-    // just yielded card-by-card) — generate once and persist it, so a
-    // later real visit to `/reading/[id]` reuses this exact reading
-    // instead of paying for a second generation.
-    const interpreter = getInterpreter();
-    const reading = await interpreter.natalReading(chart);
-    await db.reading.create({
-      data: { profileId, cards: JSON.stringify(reading.cards), model: interpreter.model },
-    });
-    cards = reading.cards;
-  }
-
+  const cards = JSON.parse(existing.cards) as Card[];
   const hero = cards.find((c) => c.id === HERO_CARD_ID) ?? cards[0];
 
   return {

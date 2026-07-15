@@ -11,9 +11,22 @@
  * generated Reading, exactly as interpreter.chat(chart, reading, messages)
  * expects (PRD: "given the chart JSON + the generated reading as context").
  * If no Reading has been generated yet for this profile (the user reached
- * /master without ever loading /reading/[id]), one is generated and saved
- * here so chat never hard-depends on page-visit ordering — mirroring the
- * reading stream route's own idempotent-generation pattern.
+ * /master without ever loading /reading/[id]), chat grounds itself on a
+ * lightweight, non-LLM chart summary instead (`chartOnlyReadingSummary` —
+ * see prompts.ts) rather than silently generating and persisting a full
+ * ~8-10 card natal reading here. That old behavior (FIX-report.md item 5)
+ * both risked a duplicate reading generation racing the real one from
+ * `/reading/[id]` and, against DeepSeek, stalled the first chat token by
+ * 10-20s (PRD §5.3 wants ~2s to first token). `/reading/[id]`'s stream
+ * route is now the sole natal-reading generation trigger.
+ *
+ * Cost control (PRD §11, FIX-report.md item 1): every POST here pays for
+ * one LLM chat completion with no caching, so this is rate-limited at the
+ * very top of the handler, before any DB work, using a dual per-session +
+ * per-IP token bucket (`src/lib/rate-limit.ts`). A request body over
+ * `MAX_BODY_BYTES` is rejected before `request.json()` even runs (cheap
+ * CPU/memory guard against an oversized payload, independent of the zod
+ * message-length check below which only fires after parsing).
  *
  * Persistence: one ChatThread per profile (created lazily on first
  * message — PRD §5.3 describes a single "chat thread scoped to a saved
@@ -24,12 +37,17 @@
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getInterpreter } from "@/lib/interpreter/interpreter";
+import { chartOnlyReadingSummary } from "@/lib/interpreter/prompts";
 import type { Chart, ChatMessage as InterpreterChatMessage, Reading } from "@/lib/interpreter/types";
+import { checkDualRateLimit, getClientIp, rateLimitedResponse } from "@/lib/rate-limit";
 import { getSessionUserId } from "@/lib/session";
 
 const BodySchema = z.object({
   message: z.string().trim().min(1, "A non-empty message is required.").max(4000, "That message is too long."),
 });
+
+/** Generous ceiling well above the 4000-char message cap (UTF-8 worst case ~4 bytes/char, plus JSON envelope overhead) — this exists purely as a cheap pre-parse CPU/memory guard, not the real validation (zod's `.max(4000)` above is). */
+const MAX_BODY_BYTES = 32 * 1024;
 
 function isChatRole(role: string): role is "user" | "assistant" {
   return role === "user" || role === "assistant";
@@ -41,6 +59,19 @@ export async function POST(request: Request, ctx: { params: Promise<{ profileId:
   const userId = await getSessionUserId();
   if (!userId) {
     return new Response("Unauthorized", { status: 401 });
+  }
+
+  // Rate limit before any DB work or body parsing — this route always pays
+  // for an LLM call, so an over-budget caller should be turned away as
+  // cheaply as possible (PRD §11 cost control).
+  const rateLimit = checkDualRateLimit("chat", userId, getClientIp(request.headers));
+  if (!rateLimit.allowed) {
+    return rateLimitedResponse("chat", rateLimit);
+  }
+
+  const contentLength = Number(request.headers.get("content-length") ?? "0");
+  if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
+    return new Response("Request body too large.", { status: 413 });
   }
 
   const profile = await db.profile.findUnique({ where: { id: profileId } });
@@ -79,15 +110,9 @@ export async function POST(request: Request, ctx: { params: Promise<{ profileId:
   const interpreter = getInterpreter();
 
   const readingRow = await db.reading.findFirst({ where: { profileId }, orderBy: { generatedAt: "desc" } });
-  let reading: Reading;
-  if (readingRow) {
-    reading = { cards: JSON.parse(readingRow.cards), model: readingRow.model };
-  } else {
-    reading = await interpreter.natalReading(chart);
-    await db.reading.create({
-      data: { profileId, cards: JSON.stringify(reading.cards), model: reading.model },
-    });
-  }
+  const reading: Reading = readingRow
+    ? { cards: JSON.parse(readingRow.cards), model: readingRow.model }
+    : chartOnlyReadingSummary(chart);
 
   const messages: InterpreterChatMessage[] = [...history, { role: "user", content: userText }];
 

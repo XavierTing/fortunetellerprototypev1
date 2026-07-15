@@ -35,6 +35,7 @@ import {
   type Reading,
   type ChatMessage,
   type DailyFortune,
+  type DailyInteractionFact,
   type Compat,
   type RelationFacts,
   type Interpreter,
@@ -339,12 +340,17 @@ export class DeepSeekInterpreter implements Interpreter {
     }
   }
 
-  async dailyFortune(chart: Chart, dayGanZhi: string, date: string): Promise<DailyFortune> {
+  async dailyFortune(
+    chart: Chart,
+    dayGanZhi: string,
+    date: string,
+    interaction?: DailyInteractionFact | null
+  ): Promise<DailyFortune> {
     const { object } = await generateObject({
       model: this.languageModel,
       schema: DailyFortuneSchema,
       system: SYSTEM_PROMPT,
-      prompt: buildDailyFortunePrompt(chart, dayGanZhi, date),
+      prompt: buildDailyFortunePrompt(chart, dayGanZhi, date, interaction),
     });
     return DailyFortuneSchema.parse(object);
   }

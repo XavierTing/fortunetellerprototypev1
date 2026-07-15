@@ -11,10 +11,17 @@
  * explicitly bans the translated-Chinese tells we flagged in the
  * competitor study (see research/english-market-competitors.md — FateTell's
  * "localized, not native" weakness).
+ *
+ * PRIVACY (PRD §11: "send only what's needed [to the LLM]"): `chartFactsBlock`
+ * never serializes the raw `chart.input` (birth date, birth time, exact
+ * lat/lng, IANA tzId) — those are the most identifying fields a user gives
+ * this app, and the interpreter doesn't need them to do its job. Only the
+ * *derived* chart facts it actually interprets from are sent — see
+ * `projectChartForPrompt` below.
  */
 import type { Chart, Element } from "@/lib/bazi";
 import type { CardSpec } from "./card-specs";
-import type { RelationFacts, Reading, ChatMessage } from "./types";
+import type { DailyInteractionFact, RelationFacts, Reading, ChatMessage } from "./types";
 import { ELEMENT_LABEL, elementRelation, parseGanZhi } from "./five-elements";
 
 // ---------------------------------------------------------------------------
@@ -59,8 +66,34 @@ Assistant: "I can't tell you whether to quit — that's a life decision, not a c
 // Chart grounding — the JSON block every prompt below hands the model
 // ---------------------------------------------------------------------------
 
+/**
+ * The chart facts an interpreter is actually allowed to see and interpret
+ * from — pillars/elements/dayMaster/strength/favorable-unfavorable/luck
+ * pillars/zodiac/branch relations/true solar time. Deliberately OMITS
+ * `chart.input` in full (raw birth date, birth time, exact lat/lng, IANA
+ * tzId) — see this file's header. `trueSolarTime` stays because the model
+ * needs it to narrate the "why your hour pillar is precise" mechanics
+ * (PRD §5.1); it's a corrected clock time, not the birth coordinates.
+ */
+export type ChartPromptProjection = Omit<Chart, "input">;
+
+export function projectChartForPrompt(chart: Chart): ChartPromptProjection {
+  return {
+    trueSolarTime: chart.trueSolarTime,
+    pillars: chart.pillars,
+    dayMaster: chart.dayMaster,
+    elements: chart.elements,
+    dayMasterStrength: chart.dayMasterStrength,
+    favorableElements: chart.favorableElements,
+    unfavorableElements: chart.unfavorableElements,
+    luckPillars: chart.luckPillars,
+    zodiac: chart.zodiac,
+    branchRelations: chart.branchRelations,
+  };
+}
+
 function chartFactsBlock(chart: Chart, label = "Chart"): string {
-  return `${label} ground truth (JSON, computed by the engine — treat every value as fact, invent nothing beyond it):\n${JSON.stringify(chart, null, 2)}`;
+  return `${label} ground truth (JSON, computed by the engine — treat every value as fact, invent nothing beyond it; birth date/time/place are intentionally withheld from this projection and unavailable to you):\n${JSON.stringify(projectChartForPrompt(chart), null, 2)}`;
 }
 
 function elementLine(elements: Record<Element, number>): string {
@@ -90,6 +123,38 @@ export function buildCardPrompt(chart: Chart, spec: CardSpec): string {
 // Chat — system prompt with chart + reading context
 // ---------------------------------------------------------------------------
 
+/**
+ * A lightweight, non-LLM "reading" used to ground 师傅 chat when no real
+ * Reading has been generated for a profile yet (FIX-report.md item 5): the
+ * chat route used to silently call `interpreter.natalReading()` — a full
+ * ~8-10 card generation — the first time someone opened `/master` without
+ * ever visiting `/reading/[id]` first, which is both a duplicate-generation
+ * risk (a second full reading could get persisted moments before/after the
+ * real one) and, against DeepSeek, a 10-20s stall before the first chat
+ * token (PRD §5.3's "~2s to first token" acceptance criterion). This is
+ * built entirely from chart facts the engine already computed — no
+ * interpreter call, no DB write, effectively free — so chat can ground
+ * itself on the chart alone until a real Reading exists. `model` is
+ * "chart-only" specifically so it's never confused with a real generated
+ * Reading; this value is only ever held in memory for one prompt build,
+ * never persisted to the `Reading` table.
+ */
+export function chartOnlyReadingSummary(chart: Chart): Reading {
+  const favorable = chart.favorableElements.length > 0 ? chart.favorableElements.map((el) => ELEMENT_LABEL[el]).join(", ") : "none flagged";
+  const unfavorable = chart.unfavorableElements.length > 0 ? chart.unfavorableElements.map((el) => ELEMENT_LABEL[el]).join(", ") : "none flagged";
+  const strengthLabel = chart.dayMasterStrength.charAt(0).toUpperCase() + chart.dayMasterStrength.slice(1);
+  return {
+    model: "chart-only",
+    cards: [
+      {
+        id: "chart-summary",
+        headline: `${strengthLabel} ${ELEMENT_LABEL[chart.dayMaster.element]} Day Master, Year of the ${chart.zodiac}.`,
+        body: `No full natal reading has been generated for this profile yet — ground every answer only in the chart facts above, and be upfront that the full card-by-card reading isn't ready yet if asked about it. Favorable elements: ${favorable}. Unfavorable elements: ${unfavorable}.`,
+      },
+    ],
+  };
+}
+
 export function buildChatSystemPrompt(chart: Chart, reading: Reading): string {
   const cardsSummary = reading.cards
     .map((card) => `- ${card.headline} — ${card.body}`)
@@ -115,7 +180,12 @@ export function toModelMessages(messages: ChatMessage[]): { role: "user" | "assi
 // Daily fortune
 // ---------------------------------------------------------------------------
 
-export function buildDailyFortunePrompt(chart: Chart, dayGanZhi: string, date: string): string {
+export function buildDailyFortunePrompt(
+  chart: Chart,
+  dayGanZhi: string,
+  date: string,
+  interaction?: DailyInteractionFact | null
+): string {
   const parsed = parseGanZhi(dayGanZhi);
   const relation = parsed ? elementRelation(chart.dayMaster.element, parsed.stemElement) : null;
   return [
@@ -125,6 +195,9 @@ export function buildDailyFortunePrompt(chart: Chart, dayGanZhi: string, date: s
     "",
     `Today's day pillar (干支): ${dayGanZhi}${parsed ? ` — stem ${parsed.stem} (${parsed.stemPinyin}, ${ELEMENT_LABEL[parsed.stemElement]}), branch ${parsed.branch} (${parsed.branchPinyin}, ${parsed.branchAnimal})` : " (raw ganzhi string, parse cautiously)"}.`,
     relation ? `Relationship between today's stem element and this user's Day Master element: ${relation}.` : "",
+    interaction
+      ? `Today's branch also forms a classical relation against this user's own natal chart (engine-computed, the only relationship claim you may make about today vs. their birth pillars): ${interaction.type} — ${interaction.note} Weave this in if it's the most notable thing about today; a clash (相冲) or punishment (相刑) day is worth naming plainly (agency-first, not fatalistic), and a harmony (六合/三合) day is worth naming as unusually smooth.`
+      : "",
     "",
     "Return headline (2-3 lines max, wry, memorable, screenshot-worthy — this is a distinct notification voice, punchier than the natal reading), body (1-3 sentences expanding on today's energy, grounded in the day pillar vs. day master relationship above), energy (one short phrase describing today's overall energy), leanInto (one concrete thing to lean into today), and goEasyOn (one concrete thing to go easy on today). Every field must be usable on a small share card — keep them tight.",
   ]

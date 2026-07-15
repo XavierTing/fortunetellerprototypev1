@@ -17,6 +17,23 @@ export const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 export const MIN_BIRTH_YEAR = 1900;
 export const MAX_BIRTH_YEAR = new Date().getUTCFullYear() + 1;
 
+/**
+ * "male" | "female" — collected so `computeChart`'s `gender` option can
+ * determine 大运 (luck-pillar) direction correctly (src/lib/bazi/luck.ts:
+ * forward vs. reverse through the sexagenary cycle depends on gender ×
+ * year-stem polarity; the engine silently defaulted to "male" for every
+ * user before this field existed, quietly reversing the luck sequence for
+ * roughly half of them). Not validated as a hard-fail field — an
+ * unexpected/missing value falls back to "male" in `resolveBirthInput`
+ * rather than blocking submission, since the form always renders one
+ * option pre-selected.
+ */
+export type Gender = "male" | "female";
+
+function normalizeGender(raw: string): Gender {
+  return raw === "female" ? "female" : "male";
+}
+
 export const BirthFormSchema = z
   .object({
     name: z.string().trim().max(80, "Keep the name under 80 characters."),
@@ -25,6 +42,8 @@ export const BirthFormSchema = z
     /** "on" when the "I don't know my birth time" checkbox is checked, "" otherwise. */
     timeUnknown: z.string(),
     cityId: z.string().min(1, "Pick a city from the suggestions list."),
+    /** "male" | "female", see `Gender` above — normalized by `resolveBirthInput`. */
+    gender: z.string(),
   })
   .superRefine((data, ctx) => {
     if (!DATE_RE.test(data.date)) {
@@ -54,6 +73,7 @@ export interface ResolvedBirthInput {
   /** null when the time is unknown — degrades to a 3-pillar chart (PRD §5.1). */
   time: string | null;
   cityId: string;
+  gender: Gender;
 }
 
 /** Collapses the validated form shape into what the engine + Profile row need. */
@@ -64,5 +84,6 @@ export function resolveBirthInput(input: BirthFormInput): ResolvedBirthInput {
     date: input.date,
     time: timeUnknown ? null : input.time,
     cityId: input.cityId,
+    gender: normalizeGender(input.gender),
   };
 }

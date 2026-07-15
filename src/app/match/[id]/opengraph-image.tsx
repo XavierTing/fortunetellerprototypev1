@@ -13,7 +13,7 @@
  * fallback card instead of a broken-image icon.
  */
 import { loadCompatCardData } from "@/app/api/share/compat-data";
-import { renderCompatibilityCard, SHARE_SIZES } from "@/app/api/share/render";
+import { COMPAT_CARD_FALLBACK, renderCompatibilityCard, SHARE_SIZES } from "@/app/api/share/render";
 
 export const alt = "Compatibility reading · Cinnabar";
 export const size = SHARE_SIZES.og;
@@ -22,20 +22,5 @@ export const contentType = "image/png";
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const data = await loadCompatCardData(id);
-
-  if (!data) {
-    return renderCompatibilityCard(
-      {
-        nameA: "Cinnabar",
-        nameB: "",
-        dayMasterLabelA: "",
-        dayMasterLabelB: "",
-        score: 0,
-        verdict: "A relationship reading between two charts.",
-      },
-      "og"
-    );
-  }
-
-  return renderCompatibilityCard(data, "og");
+  return renderCompatibilityCard(data ?? COMPAT_CARD_FALLBACK, "og");
 }

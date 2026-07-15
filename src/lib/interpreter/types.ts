@@ -111,6 +111,18 @@ export interface NatalReadingOptions {
   cardIds?: CardId[];
 }
 
+/**
+ * Today's day-branch vs. the user's own natal branches, when a classical
+ * relation (相冲 clash / 六合 harmony / 三合 / 相刑) fires against the
+ * chart's own branches — engine-computed by `src/app/today/lib.ts`'s
+ * `dayPillarInteraction`, passed through so the daily narrative can
+ * mention a clash/harmony day it otherwise has no way to see.
+ */
+export interface DailyInteractionFact {
+  type: string;
+  note: string;
+}
+
 // ---------------------------------------------------------------------------
 // The Interpreter contract — implemented by MockInterpreter and
 // DeepSeekInterpreter. All chart facts (element counts, pillars, dates,
@@ -131,8 +143,18 @@ export interface Interpreter {
   /** 师傅 chat: streamed response tokens, grounded in the chart + the already-generated reading. */
   chat(chart: Chart, reading: Reading, messages: ChatMessage[]): AsyncIterable<string>;
 
-  /** One-day reading tied to today's real day pillar (dayGanZhi) and the user's chart. */
-  dailyFortune(chart: Chart, dayGanZhi: string, date: string): Promise<DailyFortune>;
+  /**
+   * One-day reading tied to today's real day pillar (dayGanZhi) and the
+   * user's chart. `interaction` is optional (engine-computed today-vs-natal
+   * clash/harmony fact, when one fires) so the narrative can name a clash
+   * day plainly instead of describing today in a vacuum.
+   */
+  dailyFortune(
+    chart: Chart,
+    dayGanZhi: string,
+    date: string,
+    interaction?: DailyInteractionFact | null
+  ): Promise<DailyFortune>;
 
   /** Two-chart relationship reading + shareable verdict. */
   compatibility(chartA: Chart, chartB: Chart, relationFacts: RelationFacts): Promise<Compat>;

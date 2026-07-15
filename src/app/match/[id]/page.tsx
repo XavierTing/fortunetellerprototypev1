@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Eyebrow, Section } from "@/components/ui";
+import { loadCompatCardData } from "@/app/api/share/compat-data";
 import { db } from "@/lib/db";
 import type { Chart, Compat } from "@/lib/interpreter/types";
 import { getSessionUserId } from "@/lib/session";
 import type { PersonBRecord } from "../types";
 import { CompatResult } from "./compat-result";
+import { MatchTeaser } from "./match-teaser";
 
 export const metadata: Metadata = {
   title: "Compatibility · Cinnabar",
@@ -15,19 +17,26 @@ export const metadata: Metadata = {
 /**
  * The detailed compatibility reading. Session-scoped to the profileA owner
  * (same auth posture as `reading/[id]/page.tsx`) — birth data and the full
- * reading text stay private to the person who ran the check; the *public*
- * artifact meant for sharing is the OG image (`./opengraph-image.tsx`) and
- * the `/api/share/compatibility/[id]` card, which expose only the score,
- * verdict, and the two display names (see `api/share/compat-data.ts`).
+ * reading text stay private to the person who ran the check. Anyone else
+ * opening this URL (a shared link, FIX-report.md item 4's core invite loop)
+ * sees the public, non-PII `MatchTeaser` instead of a 404: the same score/
+ * verdict/names/Day-Master-labels already exposed by the OG image
+ * (`./opengraph-image.tsx`) and the `/api/share/compatibility/[id]` card
+ * (see `api/share/compat-data.ts`), plus a CTA back to `/reading/new`.
  */
 export default async function MatchResultPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const userId = await getSessionUserId();
-  if (!userId) notFound();
-
   const pair = await db.compatibilityPair.findUnique({ where: { id }, include: { profileA: true } });
-  if (!pair || pair.profileA.userId !== userId || !pair.profileA.chartCache) notFound();
+  if (!pair) notFound();
+
+  const userId = await getSessionUserId();
+  const isOwner = Boolean(userId) && pair.profileA.userId === userId;
+
+  if (!isOwner || !pair.profileA.chartCache) {
+    const data = await loadCompatCardData(id);
+    return <MatchTeaser data={data} />;
+  }
 
   const chartA = JSON.parse(pair.profileA.chartCache) as Chart;
   const personB = JSON.parse(pair.personB) as PersonBRecord;

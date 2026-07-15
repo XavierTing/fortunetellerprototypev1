@@ -692,3 +692,52 @@ export function renderDailyCard(data: DailyCardData, sizeKey: ShareSizeKey = "og
     { width, height }
   );
 }
+
+// ---------------------------------------------------------------------------
+// Branded fallback data (FIX-report.md item 2): a single source of truth for
+// "nothing's been generated for this id yet" — used by BOTH the generic
+// `/api/share/[type]/[id]` route and each feature's `opengraph-image.tsx`
+// file-convention hook, so a stale/unvisited/not-yet-generated id always
+// renders this on-brand card instead of a 404 or a broken-image icon, and
+// so the two integration points stay byte-identical (this file's header's
+// own stated goal). Deliberately generic/non-personal copy — these are
+// rendered on a public, sessionless path with no chart or reading to draw
+// from (that's the whole point: reaching this data means nothing is
+// persisted for `id` yet, so nothing here may come from a fresh LLM call).
+// ---------------------------------------------------------------------------
+
+export const READING_CARD_FALLBACK: ReadingCardData = {
+  name: "",
+  dayMasterElement: "wood",
+  dayMasterElementLabel: "",
+  dayMasterStrength: "balanced",
+  zodiac: "",
+  elements: { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 },
+  favorableElements: [],
+  tagline: "A chart-grounded natal reading — calculated, not guessed.",
+};
+
+export const COMPAT_CARD_FALLBACK: CompatCardData = {
+  nameA: "Cinnabar",
+  nameB: "",
+  dayMasterLabelA: "",
+  dayMasterLabelB: "",
+  score: 0,
+  verdict: "A relationship reading between two charts.",
+};
+
+/** A function (not a constant) so `date` reflects "today" per-request rather than freezing at module load in a long-running server process. */
+export function dailyCardFallback(): DailyCardData {
+  return {
+    name: "",
+    date: new Date().toISOString().slice(0, 10),
+    stemElementLabel: "",
+    branchElementLabel: "",
+    branchAnimal: "",
+    dayMasterRelation: "same",
+    headline: "A short, honest daily fortune tied to your own chart.",
+    energy: "",
+    leanInto: "",
+    goEasyOn: "",
+  };
+}

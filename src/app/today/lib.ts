@@ -31,6 +31,7 @@ import { db } from "@/lib/db";
 import { getInterpreter } from "@/lib/interpreter/interpreter";
 import type { Chart, DailyFortune } from "@/lib/interpreter/types";
 import { elementRelation, parseGanZhi, type ElementRelation } from "@/lib/interpreter/five-elements";
+import { checkDualRateLimit, RateLimitExceededError } from "@/lib/rate-limit";
 
 export interface TodayInfo {
   /** "YYYY-MM-DD" civil date this fortune is cast for, in the resolved zone. */
@@ -125,15 +126,79 @@ export interface DailyFortuneResult {
   castAt: Date;
 }
 
+/** Keys `checkDualRateLimit` needs — see `src/lib/rate-limit.ts`. */
+export interface DailyRateLimitKeys {
+  sessionKey: string;
+  ipKey: string;
+}
+
+function rowToResult(
+  content: string,
+  createdAt: Date,
+  today: TodayInfo,
+  dayMasterRelation: ElementRelation,
+  interaction: DayInteraction | null
+): DailyFortuneResult {
+  return {
+    fortune: JSON.parse(content) as DailyFortune,
+    today,
+    dayMasterRelation,
+    interaction,
+    cacheHit: true,
+    castAt: createdAt,
+  };
+}
+
 /**
- * The route's single entry point: resolve today's date/干支, return the
- * cached DailyFortune for (profileId, date) if one already exists, or
- * generate + persist one via the interpreter otherwise. Handles the rare
- * concurrent-first-visit race (two requests both miss the cache) by
- * catching the unique-constraint write and re-reading instead of erroring —
- * the cache's whole point is exactly one row per (profileId, date).
+ * Read-only lookup: returns today's cached DailyFortune for `profileId` if
+ * one already exists, or `null` otherwise — NEVER calls the interpreter or
+ * writes to the database. This is the only daily-fortune loader the public,
+ * sessionless share/OG surfaces (`api/share/daily-data.ts`,
+ * `today/opengraph-image.tsx`'s fallback path) are allowed to call (see
+ * FIX-report.md item 2 — a link-preview bot hitting an unvisited profile's
+ * share image must never trigger a paid LLM generation or a DB write).
+ * Generation stays exclusive to `loadDailyFortune` below, reached only from
+ * the session-owner-gated `/today` page.
  */
-export async function loadDailyFortune(profileId: string, chart: Chart, tzId: string): Promise<DailyFortuneResult> {
+export async function loadCachedDailyFortune(
+  profileId: string,
+  chart: Chart,
+  tzId: string
+): Promise<DailyFortuneResult | null> {
+  const today = computeTodayInfo(tzId);
+  const dayMasterRelation = elementRelation(chart.dayMaster.element, today.parsed.stemElement);
+  const interaction = dayPillarInteraction(chart, today);
+
+  const existing = await db.dailyFortune.findUnique({
+    where: { profileId_date: { profileId, date: today.date } },
+  });
+  if (!existing) return null;
+  return rowToResult(existing.content, existing.createdAt, today, dayMasterRelation, interaction);
+}
+
+/**
+ * The owner-facing `/today` page's entry point: resolve today's date/干支,
+ * return the cached DailyFortune for (profileId, date) if one already
+ * exists, or generate + persist one via the interpreter otherwise. Handles
+ * the rare concurrent-first-visit race (two requests both miss the cache)
+ * by catching the unique-constraint write and re-reading instead of
+ * erroring — the cache's whole point is exactly one row per
+ * (profileId, date).
+ *
+ * `rateLimitKeys` is REQUIRED (not optional) precisely because this
+ * function is the one place in the app allowed to trigger a fresh
+ * `interpreter.dailyFortune()` call — see PRD §11 ("cost control... rate-
+ * limit"). A cache hit never touches the limiter (replaying an already-paid-
+ * for row is free); only the generate branch below checks and consumes a
+ * token, throwing `RateLimitExceededError` when the caller is over budget
+ * so `/today` can render a friendly inline state instead of a 500.
+ */
+export async function loadDailyFortune(
+  profileId: string,
+  chart: Chart,
+  tzId: string,
+  rateLimitKeys: DailyRateLimitKeys
+): Promise<DailyFortuneResult> {
   const today = computeTodayInfo(tzId);
   const dayMasterRelation = elementRelation(chart.dayMaster.element, today.parsed.stemElement);
   const interaction = dayPillarInteraction(chart, today);
@@ -142,18 +207,16 @@ export async function loadDailyFortune(profileId: string, chart: Chart, tzId: st
     where: { profileId_date: { profileId, date: today.date } },
   });
   if (existing) {
-    return {
-      fortune: JSON.parse(existing.content) as DailyFortune,
-      today,
-      dayMasterRelation,
-      interaction,
-      cacheHit: true,
-      castAt: existing.createdAt,
-    };
+    return rowToResult(existing.content, existing.createdAt, today, dayMasterRelation, interaction);
+  }
+
+  const rateLimit = checkDualRateLimit("daily", rateLimitKeys.sessionKey, rateLimitKeys.ipKey);
+  if (!rateLimit.allowed) {
+    throw new RateLimitExceededError("daily", rateLimit.retryAfterMs ?? 60_000);
   }
 
   const interpreter = getInterpreter();
-  const fortune = await interpreter.dailyFortune(chart, today.ganZhi, today.date);
+  const fortune = await interpreter.dailyFortune(chart, today.ganZhi, today.date, interaction);
 
   try {
     const created = await db.dailyFortune.create({
@@ -165,14 +228,7 @@ export async function loadDailyFortune(profileId: string, chart: Chart, tzId: st
       where: { profileId_date: { profileId, date: today.date } },
     });
     if (raced) {
-      return {
-        fortune: JSON.parse(raced.content) as DailyFortune,
-        today,
-        dayMasterRelation,
-        interaction,
-        cacheHit: true,
-        castAt: raced.createdAt,
-      };
+      return rowToResult(raced.content, raced.createdAt, today, dayMasterRelation, interaction);
     }
     throw err;
   }

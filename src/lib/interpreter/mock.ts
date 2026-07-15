@@ -20,6 +20,7 @@ import type {
   Reading,
   ChatMessage,
   DailyFortune,
+  DailyInteractionFact,
   Compat,
   RelationFacts,
   Interpreter,
@@ -431,15 +432,23 @@ const RELATION_FLAVOR: Record<
   },
 };
 
-export function deriveDailyFortune(chart: Chart, dayGanZhi: string, date: string): DailyFortune {
+export function deriveDailyFortune(
+  chart: Chart,
+  dayGanZhi: string,
+  date: string,
+  interaction?: DailyInteractionFact | null
+): DailyFortune {
   const parsed = parseGanZhi(dayGanZhi);
   const relation = parsed ? elementRelation(chart.dayMaster.element, parsed.stemElement) : "same";
   const flavor = RELATION_FLAVOR[relation];
   const seed = hashString(`${chartSeed(chart)}|${dayGanZhi}|${date}`);
   const headline = pick(seed, 1, flavor.headlines);
+  const interactionNote = interaction
+    ? ` On top of that, today's branch ${isClashRelationType(interaction.type as BranchRelation["type"]) ? "clashes with" : "forms a harmony with"} your own natal chart — ${interaction.note}`
+    : "";
   const body = parsed
-    ? `Today's day pillar is ${parsed.stem}${parsed.branch} (${parsed.stemPinyin} ${parsed.branchPinyin}, the ${parsed.branchAnimal} day) — ${ELEMENT_LABEL[parsed.stemElement]} energy meeting your ${ELEMENT_LABEL[chart.dayMaster.element]} Day Master. ${flavor.energy}`
-    : `Today's day pillar (${dayGanZhi}) sets the tone against your ${ELEMENT_LABEL[chart.dayMaster.element]} Day Master. ${flavor.energy}`;
+    ? `Today's day pillar is ${parsed.stem}${parsed.branch} (${parsed.stemPinyin} ${parsed.branchPinyin}, the ${parsed.branchAnimal} day) — ${ELEMENT_LABEL[parsed.stemElement]} energy meeting your ${ELEMENT_LABEL[chart.dayMaster.element]} Day Master. ${flavor.energy}${interactionNote}`
+    : `Today's day pillar (${dayGanZhi}) sets the tone against your ${ELEMENT_LABEL[chart.dayMaster.element]} Day Master. ${flavor.energy}${interactionNote}`;
   return DailyFortuneSchema.parse({
     headline,
     body,
@@ -585,8 +594,13 @@ export class MockInterpreter implements Interpreter {
     return mockChatStream(chart, reading, messages);
   }
 
-  async dailyFortune(chart: Chart, dayGanZhi: string, date: string): Promise<DailyFortune> {
-    return deriveDailyFortune(chart, dayGanZhi, date);
+  async dailyFortune(
+    chart: Chart,
+    dayGanZhi: string,
+    date: string,
+    interaction?: DailyInteractionFact | null
+  ): Promise<DailyFortune> {
+    return deriveDailyFortune(chart, dayGanZhi, date, interaction);
   }
 
   async compatibility(chartA: Chart, chartB: Chart, relationFacts: RelationFacts): Promise<Compat> {

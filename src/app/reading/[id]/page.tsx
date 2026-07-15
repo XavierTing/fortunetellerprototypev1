@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Eyebrow, Section } from "@/components/ui";
+import { loadReadingCardData } from "@/app/api/share/reading-data";
 import { db } from "@/lib/db";
 import type { Card, Chart } from "@/lib/interpreter/types";
 import { getSessionUserId } from "@/lib/session";
 import { ChartSummary } from "./chart-summary";
 import { ReadingStream } from "./reading-stream";
+import { ReadingTeaser } from "./reading-teaser";
 import { ShareButton } from "./share-button";
 
 export const metadata: Metadata = { title: "Your Reading · Cinnabar" };
@@ -26,11 +28,21 @@ function formatBirthLine(birthTime: string | null, chart: Chart): string {
 export default async function ReadingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const userId = await getSessionUserId();
-  if (!userId) notFound();
-
   const profile = await db.profile.findUnique({ where: { id } });
-  if (!profile || profile.userId !== userId || !profile.chartCache) notFound();
+  if (!profile || !profile.chartCache) notFound();
+
+  const userId = await getSessionUserId();
+  const isOwner = Boolean(userId) && profile.userId === userId;
+
+  // Not the profile's own session (a shared link opened by anyone else, or
+  // no session cookie at all): render the public, non-PII teaser instead of
+  // a 404 (FIX-report.md item 4 — the share button hands this exact URL
+  // out, so it needs to land somewhere real). Never falls through to the
+  // owner-only reading below.
+  if (!isOwner) {
+    const data = await loadReadingCardData(id);
+    return <ReadingTeaser data={data} />;
+  }
 
   const chart = JSON.parse(profile.chartCache) as Chart;
 

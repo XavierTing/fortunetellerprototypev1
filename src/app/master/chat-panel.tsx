@@ -80,6 +80,13 @@ export function ChatPanel({
       });
 
       if (!res.ok || !res.body) {
+        // A 429 (rate-limited) response carries a friendly, specific
+        // message as JSON — surface it instead of the generic fallback in
+        // the outer catch below (see src/lib/rate-limit.ts).
+        if (res.status === 429) {
+          const body = (await res.json().catch(() => null)) as { message?: string } | null;
+          throw new Error(body?.message ?? "You're asking a lot of questions at once — give it a moment and try again.");
+        }
         throw new Error(`request failed: ${res.status}`);
       }
 
@@ -122,9 +129,9 @@ export function ChatPanel({
         settleAssistant();
         setStatus("idle");
       }
-    } catch {
+    } catch (err) {
       settleAssistant();
-      setErrorMessage("Lost connection while the 师傅 was replying. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : "Lost connection while the 师傅 was replying. Please try again.");
       setStatus("error");
     }
   }

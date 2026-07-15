@@ -55,3 +55,18 @@ export async function getSessionUserId(): Promise<string | undefined> {
   const cookieStore = await cookies();
   return cookieStore.get(CID_COOKIE)?.value;
 }
+
+/**
+ * Clears the anon session cookie — used by the "Delete my data" flow
+ * (PRD §11's privacy commitment, `/me`'s deletion action) so a visit right
+ * after deleting the underlying `User` row mints a brand-new anonymous
+ * identity instead of reusing a cookie pointing at a row that's gone (the
+ * same "stale cookie, missing row" case `getOrCreateUser` already
+ * tolerates — this just triggers it intentionally rather than by
+ * accident). Callable only from a Server Action or Route Handler, same
+ * restriction as `getOrCreateUser`.
+ */
+export async function clearSession(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(CID_COOKIE);
+}

@@ -14,24 +14,11 @@
 import { db } from "@/lib/db";
 import { getSessionUserId } from "@/lib/session";
 import { loadDailyCardData } from "@/app/api/share/daily-data";
-import { renderDailyCard, SHARE_SIZES } from "@/app/api/share/render";
+import { dailyCardFallback, renderDailyCard, SHARE_SIZES } from "@/app/api/share/render";
 
 export const alt = "Today's fortune · Cinnabar";
 export const size = SHARE_SIZES.og;
 export const contentType = "image/png";
-
-const FALLBACK = {
-  name: "",
-  date: new Date().toISOString().slice(0, 10),
-  stemElementLabel: "",
-  branchElementLabel: "",
-  branchAnimal: "",
-  dayMasterRelation: "same" as const,
-  headline: "A short, honest daily fortune tied to your own chart.",
-  energy: "",
-  leanInto: "",
-  goEasyOn: "",
-};
 
 export default async function Image() {
   const userId = await getSessionUserId();
@@ -43,6 +30,5 @@ export default async function Image() {
     : null;
 
   const data = profile ? await loadDailyCardData(profile.id) : null;
-  if (!data) return renderDailyCard(FALLBACK, "og");
-  return renderDailyCard(data, "og");
+  return renderDailyCard(data ?? dailyCardFallback(), "og");
 }

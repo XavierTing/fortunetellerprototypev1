@@ -227,9 +227,21 @@ gating logic.
 
 - **Prototype persistence, not production.** SQLite + an anonymous-cookie
   "session" (PRD §7.6) stand in for real accounts/Postgres; there's no
-  login, no email verification, no cross-device sync, and no profile
-  deletion UI yet (PRD §11 names this as a real privacy requirement before
-  launch).
+  login, no email verification, and no cross-device sync. `/me` now has a
+  "Delete my data" control (PRD §11's privacy requirement), but birth-data
+  columns (`Profile.birthDate`/`birthTime`/`lat`/`lng`) are still stored as
+  **plaintext in SQLite, not encrypted at rest** — PRD §11 calls for
+  encryption; this prototype defers it. A real deployment should encrypt
+  those columns (application-level envelope encryption, or a database/disk
+  -level encryption-at-rest feature) before storing real users' data.
+- **Rate limiting is in-memory and single-instance only.** `src/lib/
+  rate-limit.ts`'s token buckets (chat/reading/daily/compatibility — PRD
+  §11's "rate-limit chat" extended to every LLM-calling path) live in a
+  plain process-local `Map`: they reset on every restart/redeploy and are
+  **not shared across multiple server instances/replicas** — each process
+  enforces its own independent budget. Fine for this single-instance
+  prototype; a real multi-instance deployment needs a shared store (Redis
+  `INCR`+`EXPIRE`, Upstash's rate-limit primitive, etc.).
 - **No real billing.** `PaywallSlot` marks where a freemium wall would go;
   nothing is actually gated (by design, for this prototype stage).
 - **English-only UI, one system.** Only 八字 is implemented (PRD's explicit
@@ -245,9 +257,13 @@ gating logic.
   stands in for a seal mark. A follow-up could vendor real CJK-capable
   `.ttf` files under `public/fonts/` and pass them via `ImageResponse`'s
   `fonts` option.
-- **Gender defaults to "male"** for 大运 luck-pillar direction
-  (`src/lib/bazi/luck.ts`) — the birth form doesn't yet collect it (an open
-  question PRD §12 calls out explicitly).
 - **No push notifications.** The daily-fortune "notification voice" is
   copywritten and lives in the card itself; PRD §5.4 scopes actual push
   delivery out of the web prototype.
+- **Natal-reading generation dedup is single-instance only.** The reading
+  stream route's in-memory in-flight guard (`src/app/api/reading/
+  [profileId]/stream/route.ts`) dedupes two concurrent requests for the
+  same profile only within one server process; across multiple instances a
+  rare double-open could still trigger two generations. Accepted rather
+  than solved for this prototype — reads always pick the latest `Reading`
+  row, so the only cost is one extra LLM call, never inconsistent data.

@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { BirthFormSchema, resolveBirthInput } from "./birth-schema";
 
-function raw(overrides: Partial<Record<"name" | "date" | "time" | "timeUnknown" | "cityId", string>> = {}) {
+function raw(overrides: Partial<Record<"name" | "date" | "time" | "timeUnknown" | "cityId" | "gender", string>> = {}) {
   return {
     name: "",
     date: "1990-06-15",
     time: "10:30",
     timeUnknown: "",
     cityId: "new-york-ny-united-states",
+    gender: "male",
     ...overrides,
   };
 }
@@ -68,6 +69,11 @@ describe("BirthFormSchema", () => {
     const result = BirthFormSchema.safeParse(raw({ name: "x".repeat(81) }));
     expect(result.success).toBe(false);
   });
+
+  it("accepts either gender value", () => {
+    expect(BirthFormSchema.safeParse(raw({ gender: "male" })).success).toBe(true);
+    expect(BirthFormSchema.safeParse(raw({ gender: "female" })).success).toBe(true);
+  });
 });
 
 describe("resolveBirthInput", () => {
@@ -79,6 +85,7 @@ describe("resolveBirthInput", () => {
       date: "1990-06-15",
       time: "10:30",
       cityId: "new-york-ny-united-states",
+      gender: "male",
     });
   });
 
@@ -96,5 +103,15 @@ describe("resolveBirthInput", () => {
   it("trims a whitespace-only name to null", () => {
     const parsed = BirthFormSchema.parse(raw({ name: "   " }));
     expect(resolveBirthInput(parsed).name).toBeNull();
+  });
+
+  it("normalizes an explicit 'female' gender through", () => {
+    const parsed = BirthFormSchema.parse(raw({ gender: "female" }));
+    expect(resolveBirthInput(parsed).gender).toBe("female");
+  });
+
+  it("defaults an unrecognized/missing gender value to 'male' rather than failing", () => {
+    const parsed = BirthFormSchema.parse(raw({ gender: "" }));
+    expect(resolveBirthInput(parsed).gender).toBe("male");
   });
 });

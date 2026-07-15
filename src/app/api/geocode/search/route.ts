@@ -6,9 +6,12 @@
  */
 import { searchCities } from "@/lib/geocode";
 
+/** No real city name approaches this length — a cheap CPU-DoS guard against an adversarially huge `q` (searchCities scans/normalizes every city's name against it). */
+const MAX_QUERY_LENGTH = 64;
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const q = searchParams.get("q") ?? "";
+  const q = (searchParams.get("q") ?? "").slice(0, MAX_QUERY_LENGTH);
   const results = searchCities(q, 8);
   return Response.json({ results });
 }

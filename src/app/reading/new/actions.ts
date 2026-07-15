@@ -34,6 +34,7 @@ export async function createProfile(
     time: (formData.get("time") as string | null) ?? "",
     timeUnknown: (formData.get("timeUnknown") as string | null) ?? "",
     cityId: (formData.get("cityId") as string | null) ?? "",
+    gender: (formData.get("gender") as string | null) ?? "",
   };
 
   const parsed = BirthFormSchema.safeParse(raw);
@@ -69,6 +70,7 @@ export async function createProfile(
       lat: city.lat,
       lng: city.lng,
       tzId,
+      gender: resolved.gender,
     });
 
     const user = await getOrCreateUser();
@@ -81,6 +83,7 @@ export async function createProfile(
         lat: city.lat,
         lng: city.lng,
         tzId,
+        gender: resolved.gender,
         isSelf: true,
         chartCache: JSON.stringify(chart),
       },

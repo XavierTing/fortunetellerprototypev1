@@ -1,4 +1,4 @@
-import type { Chart } from "@/lib/bazi";
+import type { Chart, Gender } from "@/lib/bazi";
 
 /**
  * Person B's birth data + computed chart, persisted as JSON in
@@ -16,6 +16,8 @@ export interface PersonBRecord {
   lat: number;
   lng: number;
   tzId: string;
+  /** Fed to `computeChart` to determine 大运 (luck-pillar) direction — see src/lib/bazi/luck.ts. */
+  gender: Gender;
   cityLabel: string;
   chart: Chart;
 }

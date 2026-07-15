@@ -13,13 +13,37 @@
  * tab, or a retry), replay its saved cards instead of paying for a second
  * LLM generation. Otherwise, stream fresh cards from the interpreter and
  * persist the finished Reading once all cards have arrived.
+ *
+ * Cost control + dedup (PRD §11, FIX-report.md items 1 & 5): this route is
+ * the app's ONE natal-reading generation trigger (the share/OG paths are
+ * now strictly read-only — see reading-data.ts — and /master's chat route
+ * grounds itself on a lightweight chart-only summary instead of triggering
+ * a full reading). Two guards apply only on the actual-generation branch
+ * (a cache hit above costs nothing and is never rate-limited or deduped):
+ *   1. `checkDualRateLimit` — a per-session + per-IP token bucket.
+ *   2. `inFlightReadingGenerations` — an in-memory, single-instance map
+ *      that lets a second concurrent request for the SAME profile (e.g. two
+ *      tabs opened at once) await the first request's in-progress
+ *      generation instead of starting its own. This is intentionally
+ *      simple, not a fully general lock: it dedupes concurrent requests
+ *      within one server process only. A residual race across MULTIPLE
+ *      process instances (each with its own empty map) is accepted rather
+ *      than solved — `db.reading.findFirst(...orderBy generatedAt desc)`
+ *      already always reads the latest row, so the only cost of that rarer
+ *      race is one extra LLM generation, never inconsistent data. Not
+ *      shared across instances/restarts, same prototype-scoped caveat as
+ *      `src/lib/rate-limit.ts`.
  */
 import { db } from "@/lib/db";
 import { getInterpreter } from "@/lib/interpreter/interpreter";
 import type { Card, Chart } from "@/lib/interpreter/types";
+import { checkDualRateLimit, getClientIp, rateLimitMessage } from "@/lib/rate-limit";
 import { getSessionUserId } from "@/lib/session";
 
-export async function GET(_request: Request, ctx: { params: Promise<{ profileId: string }> }) {
+/** See this file's header — keyed by profileId, cleared as soon as the primary generation settles (success or failure). */
+const inFlightReadingGenerations = new Map<string, Promise<{ cards: Card[]; model: string }>>();
+
+export async function GET(request: Request, ctx: { params: Promise<{ profileId: string }> }) {
   const { profileId } = await ctx.params;
 
   const userId = await getSessionUserId();
@@ -58,20 +82,58 @@ export async function GET(_request: Request, ctx: { params: Promise<{ profileId:
           return;
         }
 
-        const interpreter = getInterpreter();
-        const cards: Card[] = [];
-        for await (const card of interpreter.streamNatalReading(chart)) {
-          cards.push(card);
-          send("card", card);
+        // A concurrent request for this same profile is already generating
+        // — wait for it instead of paying for a second generation, then
+        // replay its result as a fast batch (not truly live for this
+        // caller, but correct and free).
+        const inFlight = inFlightReadingGenerations.get(profileId);
+        if (inFlight) {
+          const { cards, model } = await inFlight;
+          for (const card of cards) send("card", card);
+          send("done", { model });
+          closed = true;
+          controller.close();
+          return;
         }
 
-        await db.reading.create({
-          data: { profileId, cards: JSON.stringify(cards), model: interpreter.model },
-        });
+        const rateLimit = checkDualRateLimit("reading", userId, getClientIp(request.headers));
+        if (!rateLimit.allowed) {
+          send("error", { message: rateLimitMessage("reading") });
+          closed = true;
+          controller.close();
+          return;
+        }
 
-        send("done", { model: interpreter.model });
-        closed = true;
-        controller.close();
+        const cards: Card[] = [];
+        let resolveShared: ((v: { cards: Card[]; model: string }) => void) | undefined;
+        let rejectShared: ((e: unknown) => void) | undefined;
+        const shared = new Promise<{ cards: Card[]; model: string }>((resolve, reject) => {
+          resolveShared = resolve;
+          rejectShared = reject;
+        });
+        inFlightReadingGenerations.set(profileId, shared);
+
+        try {
+          const interpreter = getInterpreter();
+          for await (const card of interpreter.streamNatalReading(chart)) {
+            cards.push(card);
+            send("card", card);
+          }
+
+          await db.reading.create({
+            data: { profileId, cards: JSON.stringify(cards), model: interpreter.model },
+          });
+
+          send("done", { model: interpreter.model });
+          resolveShared?.({ cards, model: interpreter.model });
+          closed = true;
+          controller.close();
+        } catch (err) {
+          rejectShared?.(err);
+          throw err;
+        } finally {
+          inFlightReadingGenerations.delete(profileId);
+        }
       } catch (err) {
         console.error("reading stream: generation failed", err);
         send("error", {

@@ -147,6 +147,30 @@ export function BirthForm() {
         I don&apos;t know my birth time
       </label>
 
+      <Field
+        label="Gender"
+        htmlFor="gender-male"
+        hint="Used to determine your luck-cycle (大运) direction in traditional BaZi — the sequence runs forward or backward depending on gender and your birth year. Not shown anywhere else."
+      >
+        <div className="flex items-center gap-5">
+          <label className="flex items-center gap-2 text-sm text-text">
+            <input
+              type="radio"
+              id="gender-male"
+              name="gender"
+              value="male"
+              defaultChecked
+              className="h-4 w-4 border border-hairline bg-graphite accent-gold"
+            />
+            Male
+          </label>
+          <label className="flex items-center gap-2 text-sm text-text">
+            <input type="radio" name="gender" value="female" className="h-4 w-4 border border-hairline bg-graphite accent-gold" />
+            Female
+          </label>
+        </div>
+      </Field>
+
       <Field label="Birthplace" htmlFor="city-input" hint={state.fieldErrors?.cityId}>
         <div className="relative">
           <Input

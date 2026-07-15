@@ -34,6 +34,14 @@ model Profile {
   lat        Float
   lng        Float
   tzId       String // IANA timezone id, e.g. "America/New_York"
+  /// "male" | "female" — feeds `computeChart`'s `gender` option, which determines
+  /// 大运 (luck-pillar) direction (see src/lib/bazi/luck.ts's file header: forward
+  /// vs. reverse through the sexagenary cycle depends on gender × year-stem
+  /// polarity). Defaults to "male" only so existing rows created before this
+  /// column existed keep the same chart they already computed and cached
+  /// (src/lib/bazi's own historical default) — every NEW profile explicitly
+  /// collects this on the birth form (see reading/new/birth-form.tsx).
+  gender     String   @default("male")
   isSelf     Boolean  @default(false)
   chartCache String? // JSON-serialized Chart, cached after the engine computes it
   createdAt  DateTime @default(now())

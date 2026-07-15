@@ -6,6 +6,8 @@ import type { Chart, Compat } from "@/lib/interpreter/types";
 import { getSessionUserId } from "@/lib/session";
 import type { PersonBRecord } from "@/app/match/types";
 import { ElementBalanceChart } from "@/app/reading/[id]/element-balance";
+import { deleteMyData } from "./actions";
+import { DeleteDataButton } from "./delete-data-button";
 import { MeEmptyState } from "./empty-state";
 import { EmptyRow, HistoryRow } from "./history-row";
 
@@ -188,6 +190,17 @@ export default async function MePage() {
         ) : (
           <EmptyRow>No compatibility checks yet — see how your chart meets someone else&apos;s.</EmptyRow>
         )}
+      </div>
+
+      {/* Privacy (PRD §11's commitment: "allow profile deletion"). */}
+      <div className="flex flex-col gap-4 border-t border-hairline pt-10">
+        <h2 className="font-display text-xl font-medium text-ink">Privacy</h2>
+        <p className="max-w-[56ch] text-sm leading-relaxed text-muted">
+          Cinnabar has no login — this data is tied only to an anonymous session on this device. Deleting it removes
+          your chart, every reading, every 师傅 conversation, and every compatibility check for this session,
+          permanently.
+        </p>
+        <DeleteDataButton action={deleteMyData} />
       </div>
     </Section>
   );
