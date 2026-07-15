@@ -1,94 +1,215 @@
 @import "tailwindcss";
 
 /*
- * Cinnabar design tokens — PRD §8.
+ * Cinnabar design tokens — "Lacquer · Gold · Cinnabar"
  *
- * CSS custom properties on :root are the source of truth. The `@theme
- * inline` block below re-exposes them as Tailwind utilities (bg-paper,
- * text-ink, font-serif, ...) without freezing their values at build time,
- * so theme switching still works even though Tailwind v4 generates the
- * utility CSS ahead of time.
+ * A premium East-Asian luxury-material system: warm dark lacquer (漆) ground,
+ * gold leaf (金箔) as the primary accent, cinnabar red (朱砂 — the brand
+ * namesake) as the signature accent, jade (翡翠) reserved for positive/growth
+ * signals. The physical scene: consulting an oracle in a dim, candlelit,
+ * lacquer-and-gold room. Dark is the deliberate default; a "rice paper"
+ * light mode is fully committed (not a same-page toggle afterthought), but
+ * intentionally NOT the default — see the anti-cream rule this file exists
+ * to satisfy.
  *
- * Precedence (light → dark):
- *   1. :root                                    — light (default)
- *   2. @media (prefers-color-scheme: dark) :root — OS-level dark, no explicit choice
- *   3. :root[data-theme="dark" | "light"]        — explicit user choice, always wins
+ * CSS custom properties on :root are the source of truth (declared in raw,
+ * un-prefixed form, e.g. `--gold`, so they read as a portable token
+ * vocabulary independent of Tailwind). The `@theme inline` block re-exposes
+ * them as Tailwind utilities (bg-gold, text-cinnabar, font-display, ...)
+ * without freezing their values at build time, so runtime theme switching
+ * keeps working even though Tailwind v4 generates utility CSS ahead of time.
+ *
+ * Theme precedence (dark → light):
+ *   1. :root                                     — dark (default; no cream/paper ground)
+ *   2. @media (prefers-color-scheme: light) :root — OS-level light, no explicit choice
+ *   3. :root[data-theme="dark" | "light"]         — explicit user choice, always wins
  *      (an attribute selector on :root is more specific than a bare :root
  *      selector, so #3 beats #2 regardless of source order or media state)
+ *
+ * DESIGN.md documents every token, the two-face type system, and the
+ * component kit built on top of this file (src/components/ui/).
  */
 
 :root {
-  --color-paper: #f2eee6;
-  --color-ink: #1c1e26;
-  --color-cinnabar: #b0392a;
-  --color-jade: #3c7466;
-  --color-brass: #a9832f;
-  --color-line: #dad3c4;
-  --color-panel: #f7f4ee;
+  /* ---- Lacquer · Gold · Cinnabar — DARK (default) -------------------- */
+  --lacquer: oklch(11% 0.014 40);
+  --lacquer-deep: oklch(7% 0.012 40);
+  --raised: oklch(15% 0.014 40);
+  --graphite: oklch(20% 0.012 45);
 
-  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+  --gold: oklch(80% 0.128 85);
+  --gold-rich: oklch(72% 0.12 82);
+  --gold-pale: oklch(88% 0.07 88);
 
-  color-scheme: light;
+  --cinnabar: oklch(63% 0.19 33);
+  --cinnabar-deep: oklch(55% 0.18 32);
+  --glow-cinnabar: oklch(63% 0.19 33 / 0.12);
+
+  --jade: oklch(74% 0.09 168);
+
+  --ink: oklch(93% 0.006 70);
+  --text: oklch(88% 0.005 70);
+  --muted: oklch(72% 0.004 70);
+  --faint: oklch(60% 0.004 70);
+
+  --hairline: oklch(88% 0 0 / 0.12);
+  --hairline-gold: oklch(80% 0.09 85 / 0.5);
+
+  color-scheme: dark;
+
+  /* ---- Type (theme-independent — next/font vars set on <html>) ------- */
+  --font-display: var(--font-cormorant), "Iowan Old Style", Georgia, serif;
+  --font-body: var(--font-hanken), -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
+
+  /* ---- Motion ---------------------------------------------------------
+   * One easing curve, everywhere: ease-out-expo. No bounce, no elastic. */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --color-paper: #14151a;
-    --color-ink: #ece7db;
-    --color-cinnabar: #e0705a;
-    --color-jade: #6fb1a0;
-    --color-brass: #cba659;
-    --color-line: #2a2c35;
-    --color-panel: #1e2029;
+    /* ---- Lacquer · Gold · Cinnabar — "rice paper" LIGHT ------------- */
+    --lacquer: oklch(96% 0.012 85);
+    --lacquer-deep: oklch(93% 0.014 85);
+    --raised: oklch(99% 0.007 85);
+    --graphite: oklch(91% 0.012 85);
 
-    color-scheme: dark;
+    /* Gold-by-size rule: on paper, gold is deepened so it still clears
+       3:1 at large display/fill sizes. It is never used for small accent
+       text here — see the cinnabar override below and DESIGN.md §3. */
+    --gold: oklch(60% 0.13 84);
+    --gold-rich: oklch(54% 0.135 82);
+    --gold-pale: oklch(90% 0.05 86);
+
+    /* Deepened so small text/links clear 4.5:1 on paper (was 63% for dark
+       fills). Same hue, same brand color, tuned for the lighter ground. */
+    --cinnabar: oklch(52% 0.17 33);
+    --cinnabar-deep: oklch(45% 0.16 32);
+    --glow-cinnabar: oklch(52% 0.17 33 / 0.05);
+
+    --jade: oklch(42% 0.11 165);
+
+    --ink: oklch(24% 0.02 50);
+    --text: oklch(30% 0.02 50);
+    --muted: oklch(45% 0.015 50);
+    --faint: oklch(56% 0.013 50);
+
+    --hairline: oklch(24% 0.02 50 / 0.14);
+    --hairline-gold: oklch(50% 0.1 84 / 0.55);
+
+    color-scheme: light;
   }
 }
 
 :root[data-theme="dark"] {
-  --color-paper: #14151a;
-  --color-ink: #ece7db;
-  --color-cinnabar: #e0705a;
-  --color-jade: #6fb1a0;
-  --color-brass: #cba659;
-  --color-line: #2a2c35;
-  --color-panel: #1e2029;
+  --lacquer: oklch(11% 0.014 40);
+  --lacquer-deep: oklch(7% 0.012 40);
+  --raised: oklch(15% 0.014 40);
+  --graphite: oklch(20% 0.012 45);
+
+  --gold: oklch(80% 0.128 85);
+  --gold-rich: oklch(72% 0.12 82);
+  --gold-pale: oklch(88% 0.07 88);
+
+  --cinnabar: oklch(63% 0.19 33);
+  --cinnabar-deep: oklch(55% 0.18 32);
+  --glow-cinnabar: oklch(63% 0.19 33 / 0.12);
+
+  --jade: oklch(74% 0.09 168);
+
+  --ink: oklch(93% 0.006 70);
+  --text: oklch(88% 0.005 70);
+  --muted: oklch(72% 0.004 70);
+  --faint: oklch(60% 0.004 70);
+
+  --hairline: oklch(88% 0 0 / 0.12);
+  --hairline-gold: oklch(80% 0.09 85 / 0.5);
 
   color-scheme: dark;
 }
 
 :root[data-theme="light"] {
-  --color-paper: #f2eee6;
-  --color-ink: #1c1e26;
-  --color-cinnabar: #b0392a;
-  --color-jade: #3c7466;
-  --color-brass: #a9832f;
-  --color-line: #dad3c4;
-  --color-panel: #f7f4ee;
+  --lacquer: oklch(96% 0.012 85);
+  --lacquer-deep: oklch(93% 0.014 85);
+  --raised: oklch(99% 0.007 85);
+  --graphite: oklch(91% 0.012 85);
+
+  --gold: oklch(60% 0.13 84);
+  --gold-rich: oklch(54% 0.135 82);
+  --gold-pale: oklch(90% 0.05 86);
+
+  --cinnabar: oklch(52% 0.17 33);
+  --cinnabar-deep: oklch(45% 0.16 32);
+  --glow-cinnabar: oklch(52% 0.17 33 / 0.05);
+
+  --jade: oklch(42% 0.11 165);
+
+  --ink: oklch(24% 0.02 50);
+  --text: oklch(30% 0.02 50);
+  --muted: oklch(45% 0.015 50);
+  --faint: oklch(56% 0.013 50);
+
+  --hairline: oklch(24% 0.02 50 / 0.14);
+  --hairline-gold: oklch(50% 0.1 84 / 0.55);
 
   color-scheme: light;
 }
 
+/*
+ * Tailwind v4 utility wiring. `@theme inline` tells Tailwind to generate
+ * utilities (bg-lacquer, text-gold, border-cinnabar, font-display, ...)
+ * that reference the *runtime* custom property rather than a value frozen
+ * at build time — required for the light/dark swap above to work against
+ * statically-generated Tailwind CSS.
+ */
 @theme inline {
-  --color-paper: var(--color-paper);
-  --color-ink: var(--color-ink);
-  --color-cinnabar: var(--color-cinnabar);
-  --color-jade: var(--color-jade);
-  --color-brass: var(--color-brass);
-  --color-line: var(--color-line);
-  --color-panel: var(--color-panel);
+  --color-lacquer: var(--lacquer);
+  --color-lacquer-deep: var(--lacquer-deep);
+  --color-raised: var(--raised);
+  --color-graphite: var(--graphite);
 
-  --font-serif: var(--font-serif);
-  --font-sans: var(--font-sans);
+  --color-gold: var(--gold);
+  --color-gold-rich: var(--gold-rich);
+  --color-gold-pale: var(--gold-pale);
+
+  --color-cinnabar: var(--cinnabar);
+  --color-cinnabar-deep: var(--cinnabar-deep);
+
+  --color-jade: var(--jade);
+
+  --color-ink: var(--ink);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+
+  --color-hairline: var(--hairline);
+  --color-hairline-gold: var(--hairline-gold);
+
+  /* Legacy aliases: T0's stub pages (src/app/{master,today,match,me},
+     src/components/stub-page.tsx — out of this task's scope) reference
+     paper/panel/line/brass utilities. Keep them resolving to the new
+     tokens so they reskin for free instead of losing all color. */
+  --color-paper: var(--lacquer);
+  --color-panel: var(--raised);
+  --color-line: var(--hairline);
+  --color-brass: var(--gold);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
   --font-mono: var(--font-mono);
+  /* Legacy aliases (same reasoning as above). */
+  --font-serif: var(--font-display);
+  --font-sans: var(--font-body);
+
+  --ease-out-expo: var(--ease);
+  --animate-rise-in: rise-in 700ms var(--ease) both;
 }
 
 * {
-  border-color: var(--color-line);
+  border-color: var(--hairline);
 }
 
 html {
@@ -96,19 +217,43 @@ html {
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
+  background: var(--lacquer);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 ::selection {
-  background: var(--color-cinnabar);
-  color: var(--color-paper);
+  background: var(--cinnabar);
+  color: var(--lacquer-deep);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-cinnabar);
+  outline: 2px solid var(--cinnabar);
   outline-offset: 2px;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

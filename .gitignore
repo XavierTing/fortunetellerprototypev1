@@ -50,3 +50,6 @@ next-env.d.ts
 /prisma/dev.db
 *.db
 *.db-journal
+
+# internal build reports
+.build-reports/
