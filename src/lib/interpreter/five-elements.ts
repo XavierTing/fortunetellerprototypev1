@@ -1,13 +1,28 @@
 /**
- * Shared Five-Element (五行) lexicon and relationship math used by the mock
- * interpreter (to derive real, chart-grounded prose without an LLM) and by
- * prompt-building (to gloss jargon with pinyin + plain English). This is
- * intentionally small and read-only — it mirrors well-known, unambiguous
- * BaZi correspondences, not engine logic.
+ * Interpreter-specific Five-Element (五行) relationship math and prose
+ * helpers. The underlying stem/branch lexicon (天干/地支 pinyin, element,
+ * yin/yang, zodiac) and the 生/克 (generates/controls) tables are NOT
+ * duplicated here — they're imported straight from the engine's own
+ * `@/lib/bazi/constants`, which is the single source of truth for those
+ * closed, unambiguous correspondences. What stays local is genuinely
+ * interpreter-specific: English display labels, Ten-God-flavored relation
+ * naming (output/wealth/resource/authority), the ganzhi-parsing helper
+ * shaped for this module's callers, and the deterministic seeding/pick
+ * helpers the mock interpreter uses for prose variation.
  */
-import type { Element, YinYang } from "./chart-types";
+import {
+  BRANCHES,
+  CONTROLS,
+  ELEMENT_ORDER,
+  GENERATES,
+  elementThatControls,
+  elementThatGenerates,
+  STEMS,
+} from "@/lib/bazi/constants";
+import type { YinYang } from "@/lib/bazi/constants";
+import type { Element } from "@/lib/bazi";
 
-export const ELEMENTS: Element[] = ["wood", "fire", "earth", "metal", "water"];
+export const ELEMENTS: Element[] = ELEMENT_ORDER;
 
 export const ELEMENT_LABEL: Record<Element, string> = {
   wood: "Wood",
@@ -16,63 +31,6 @@ export const ELEMENT_LABEL: Record<Element, string> = {
   metal: "Metal",
   water: "Water",
 };
-
-/** The ten heavenly stems (天干), in order, with element + polarity + pinyin. */
-export const HEAVENLY_STEMS: Record<string, { element: Element; yinYang: YinYang; pinyin: string }> = {
-  "甲": { element: "wood", yinYang: "yang", pinyin: "jiǎ" },
-  "乙": { element: "wood", yinYang: "yin", pinyin: "yǐ" },
-  "丙": { element: "fire", yinYang: "yang", pinyin: "bǐng" },
-  "丁": { element: "fire", yinYang: "yin", pinyin: "dīng" },
-  "戊": { element: "earth", yinYang: "yang", pinyin: "wù" },
-  "己": { element: "earth", yinYang: "yin", pinyin: "jǐ" },
-  "庚": { element: "metal", yinYang: "yang", pinyin: "gēng" },
-  "辛": { element: "metal", yinYang: "yin", pinyin: "xīn" },
-  "壬": { element: "water", yinYang: "yang", pinyin: "rén" },
-  "癸": { element: "water", yinYang: "yin", pinyin: "guǐ" },
-};
-
-/** The twelve earthly branches (地支), with zodiac animal + pinyin. */
-export const EARTHLY_BRANCHES: Record<string, { animal: string; pinyin: string; element: Element }> = {
-  "子": { animal: "Rat", pinyin: "zǐ", element: "water" },
-  "丑": { animal: "Ox", pinyin: "chǒu", element: "earth" },
-  "寅": { animal: "Tiger", pinyin: "yín", element: "wood" },
-  "卯": { animal: "Rabbit", pinyin: "mǎo", element: "wood" },
-  "辰": { animal: "Dragon", pinyin: "chén", element: "earth" },
-  "巳": { animal: "Snake", pinyin: "sì", element: "fire" },
-  "午": { animal: "Horse", pinyin: "wǔ", element: "fire" },
-  "未": { animal: "Goat", pinyin: "wèi", element: "earth" },
-  "申": { animal: "Monkey", pinyin: "shēn", element: "metal" },
-  "酉": { animal: "Rooster", pinyin: "yǒu", element: "metal" },
-  "戌": { animal: "Dog", pinyin: "xū", element: "earth" },
-  "亥": { animal: "Pig", pinyin: "hài", element: "water" },
-};
-
-/** wood -> fire -> earth -> metal -> water -> wood (生, "generates/feeds"). */
-const GENERATES: Record<Element, Element> = {
-  wood: "fire",
-  fire: "earth",
-  earth: "metal",
-  metal: "water",
-  water: "wood",
-};
-
-/** wood -> earth -> water -> fire -> metal -> wood (克, "controls/channels"). */
-const CONTROLS: Record<Element, Element> = {
-  wood: "earth",
-  earth: "water",
-  water: "fire",
-  fire: "metal",
-  metal: "wood",
-};
-
-function invert<T extends string>(map: Record<T, T>): Record<T, T> {
-  const out = {} as Record<T, T>;
-  for (const k of Object.keys(map) as T[]) out[map[k]] = k;
-  return out;
-}
-
-const GENERATED_BY = invert(GENERATES);
-const CONTROLLED_BY = invert(CONTROLS);
 
 export type ElementRelation =
   | "same"
@@ -84,7 +42,7 @@ export type ElementRelation =
 export function elementRelation(a: Element, b: Element): ElementRelation {
   if (a === b) return "same";
   if (GENERATES[a] === b) return "generates";
-  if (GENERATED_BY[a] === b) return "generated-by";
+  if (GENERATES[b] === a) return "generated-by";
   if (CONTROLS[a] === b) return "controls";
   return "controlled-by";
 }
@@ -101,15 +59,15 @@ export function wealthElement(dayMaster: Element): Element {
 
 /** The element that generates the day master (its "resource/support", 印). */
 export function resourceElement(dayMaster: Element): Element {
-  return GENERATED_BY[dayMaster];
+  return elementThatGenerates(dayMaster);
 }
 
 /** The element that controls the day master (its "authority/pressure", 官/杀). */
 export function authorityElement(dayMaster: Element): Element {
-  return CONTROLLED_BY[dayMaster];
+  return elementThatControls(dayMaster);
 }
 
-/** Split a two-character ganzhi string (e.g. "甲子") into stem + branch info. Returns null if malformed. */
+/** Split a two-character ganzhi string (e.g. "甲子") into stem + branch info, using the engine's own stem/branch tables. Returns null if malformed. */
 export function parseGanZhi(ganZhi: string): {
   stem: string;
   stemPinyin: string;
@@ -123,18 +81,18 @@ export function parseGanZhi(ganZhi: string): {
   const chars = Array.from(ganZhi.trim());
   if (chars.length < 2) return null;
   const [stem, branch] = chars;
-  const stemInfo = HEAVENLY_STEMS[stem];
-  const branchInfo = EARTHLY_BRANCHES[branch];
-  if (!stemInfo || !branchInfo) return null;
+  const s = STEMS[stem];
+  const b = BRANCHES[branch];
+  if (!s || !b) return null;
   return {
     stem,
-    stemPinyin: stemInfo.pinyin,
-    stemElement: stemInfo.element,
-    stemYinYang: stemInfo.yinYang,
+    stemPinyin: s.pinyin,
+    stemElement: s.element,
+    stemYinYang: s.yinYang,
     branch,
-    branchPinyin: branchInfo.pinyin,
-    branchAnimal: branchInfo.animal,
-    branchElement: branchInfo.element,
+    branchPinyin: b.pinyin,
+    branchAnimal: b.zodiac,
+    branchElement: b.element,
   };
 }
 

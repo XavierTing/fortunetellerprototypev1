@@ -12,7 +12,7 @@ import {
   dominantElement,
   scarceElement,
 } from "./five-elements";
-import type { Element } from "./chart-types";
+import type { Element } from "@/lib/bazi";
 
 describe("elementRelation", () => {
   it("identifies the same element", () => {

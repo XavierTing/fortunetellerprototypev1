@@ -11,6 +11,7 @@
  * prose (not templated filler — every card interpolates real pillars,
  * element counts, and relationships from the Chart object).
  */
+import type { BranchRelation } from "@/lib/bazi";
 import type {
   Chart,
   Element,
@@ -77,6 +78,19 @@ function elementList(elements: Element[]): string {
   if (labels.length === 1) return labels[0];
   return `${labels.slice(0, -1).join(", ")} and ${labels[labels.length - 1]}`;
 }
+
+/** The engine's BranchRelation.type is an English slug (not the Chinese term), so clash-detection matches on the slug itself. */
+function isClashRelationType(type: BranchRelation["type"]): boolean {
+  return type === "chong" || type === "xing";
+}
+
+/** Display label for a branch relation's mechanics line — pinyin + Chinese term, matching this app's "gloss it in mechanics" convention. */
+const BRANCH_RELATION_LABEL: Record<BranchRelation["type"], string> = {
+  sanhe: "三合 sānhé",
+  liuhe: "六合 liùhé",
+  chong: "相冲 xiāngchōng",
+  xing: "相刑 xiāngxíng",
+};
 
 // ---------------------------------------------------------------------------
 // Element flavor lexicon
@@ -292,29 +306,33 @@ function cardFrictionAndFlow(chart: Chart, seed: number): CardContent {
     body = `Your chart doesn't flag any major branch clashes or punishments between your pillars — structurally, you're not carrying a built-in internal conflict. That doesn't mean life is friction-free, just that when tension shows up, it's more likely coming from outside circumstances than from something wired into the chart itself.`;
   } else {
     const notes = relations.slice(0, 2).map((r) => r.note).join(" ");
-    const hasClash = relations.some((r) => /冲|刑/.test(r.type));
+    const hasClash = relations.some((r) => isClashRelationType(r.type));
     body = `Your chart flags ${relations.length === 1 ? "a relationship" : `${relations.length} relationships`} between pillars: ${notes} ${hasClash ? "A clash isn't a curse — it's a built-in source of internal push-pull, usually between two things you both want. The move isn't to eliminate it, it's to notice when it's firing and choose on purpose instead of getting yanked between both sides." : "These are harmonious ties, which tend to show up as ease — people, timing, or decisions that click with less friction than you'd expect."}`;
   }
   const mechanics =
     relations.length === 0
       ? `No 三合/六合/相冲/相刑 (harmony/clash/punishment) relationships flagged between this chart's branches.`
-      : relations.map((r) => `${r.type} (${r.branches.join("+")}): ${r.note}`).join(" | ");
+      : relations.map((r) => `${BRANCH_RELATION_LABEL[r.type]} (${r.branches.join("+")}): ${r.note}`).join(" | ");
   return CardContentSchema.parse({ headline, body, mechanics });
 }
 
 function cardThisChapter(chart: Chart, seed: number): CardContent {
   const first = chart.luckPillars.pillars[0];
+  // The engine's LuckPillarEntry only carries {age, stem, branch} — derive the
+  // pinyin/element gloss from the shared ganzhi parser rather than expecting
+  // the engine to have precomputed it.
+  const firstInfo = first ? parseGanZhi(`${first.stem}${first.branch}`) : null;
   const headline = pick(seed, 80, [
     `The chapter that opened at age ${chart.luckPillars.startAge}.`,
     `Your current backdrop, not your fixed fate.`,
   ]);
   let body: string;
-  if (first) {
-    body = `Your luck pillars (大运) started running at age ${chart.luckPillars.startAge}, moving ${chart.luckPillars.forward ? "forward" : "in reverse"} through the cycle. The opening chapter brings ${ELEMENT_LABEL[first.element]} energy into your chart — think of it as the backdrop of this era of your life, not a script you're locked into. A luck pillar changes what's easy and what's costly; it doesn't change what you're allowed to do.`;
+  if (firstInfo) {
+    body = `Your luck pillars (大运) started running at age ${chart.luckPillars.startAge}, moving ${chart.luckPillars.forward ? "forward" : "in reverse"} through the cycle. The opening chapter brings ${ELEMENT_LABEL[firstInfo.stemElement]} energy into your chart — think of it as the backdrop of this era of your life, not a script you're locked into. A luck pillar changes what's easy and what's costly; it doesn't change what you're allowed to do.`;
   } else {
     body = `Your luck pillar sequence starts at age ${chart.luckPillars.startAge}, running ${chart.luckPillars.forward ? "forward" : "in reverse"} through the cycle. Think of each pillar as a change in backdrop — what's easy, what's costly — not a script you're locked into.`;
   }
-  const mechanics = `Luck pillars (大运 dà yùn): start age ${chart.luckPillars.startAge}, direction ${chart.luckPillars.forward ? "forward (顺行 shùn xíng)" : "reverse (逆行 nì xíng)"}.${first ? ` Opening pillar: ${first.stem}${first.branch} (${first.stemPinyin} ${first.branchPinyin}, ${ELEMENT_LABEL[first.element]}).` : ""}`;
+  const mechanics = `Luck pillars (大运 dà yùn): start age ${chart.luckPillars.startAge}, direction ${chart.luckPillars.forward ? "forward (顺行 shùn xíng)" : "reverse (逆行 nì xíng)"}.${first && firstInfo ? ` Opening pillar: ${first.stem}${first.branch} (${firstInfo.stemPinyin} ${firstInfo.branchPinyin}, ${ELEMENT_LABEL[firstInfo.stemElement]}).` : ""}`;
   return CardContentSchema.parse({ headline, body, mechanics });
 }
 
@@ -466,8 +484,8 @@ export function deriveCompatibility(chartA: Chart, chartB: Chart, relationFacts:
     `${chartSeed(chartA)}|${chartSeed(chartB)}|${relationFacts.dayMasterRelation.type}|${relationFacts.complementaryElements.join(",")}|${relationFacts.clashingElements.join(",")}`
   );
   const dmFlavor = DAY_MASTER_RELATION_FLAVOR[relationFacts.dayMasterRelation.type];
-  const clashBranchRelations = relationFacts.branchRelations.filter((r) => /冲|刑/.test(r.type));
-  const harmonyBranchRelations = relationFacts.branchRelations.filter((r) => !/冲|刑/.test(r.type));
+  const clashBranchRelations = relationFacts.branchRelations.filter((r) => isClashRelationType(r.type));
+  const harmonyBranchRelations = relationFacts.branchRelations.filter((r) => !isClashRelationType(r.type));
 
   let score = 55 + dmFlavor.scoreDelta;
   score += Math.min(relationFacts.complementaryElements.length, 3) * 6;

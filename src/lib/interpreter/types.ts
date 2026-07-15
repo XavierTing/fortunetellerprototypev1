@@ -1,8 +1,8 @@
 import { z } from "zod";
-import type { Chart, Element } from "./chart-types";
+import type { BranchRelation, Chart, Element } from "@/lib/bazi";
 import type { CardId } from "./card-specs";
 
-export type { Chart, Element } from "./chart-types";
+export type { Chart, Element } from "@/lib/bazi";
 export type { CardId } from "./card-specs";
 
 // ---------------------------------------------------------------------------
@@ -92,11 +92,8 @@ export interface DayMasterRelation {
   note: string;
 }
 
-export interface CompatBranchRelation {
-  type: string;
-  branches: string[];
-  note: string;
-}
+/** Reuses the engine's real BranchRelation shape (type union: sanhe/liuhe/chong/xing) rather than a divergent local copy. */
+export type CompatBranchRelation = BranchRelation;
 
 export interface RelationFacts {
   dayMasterRelation: DayMasterRelation;

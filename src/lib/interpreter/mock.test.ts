@@ -2,6 +2,7 @@ import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { MockInterpreter, deriveDailyFortune, deriveCompatibility } from "./mock";
 import { CardSchema, ReadingSchema, DailyFortuneSchema, CompatSchema } from "./types";
 import { CARD_SPECS } from "./card-specs";
+import { ELEMENT_LABEL, dominantElement } from "./five-elements";
 import {
   CHART_STRONG_WOOD,
   CHART_WEAK_WATER,
@@ -65,9 +66,10 @@ describe("MockInterpreter", () => {
     it("never contradicts the computed chart: every card grounds real chart facts", async () => {
       const reading = await interpreter.natalReading(CHART_STRONG_WOOD);
       const glance = reading.cards.find((c) => c.id === "chart-at-a-glance")!;
-      expect(glance.body).toContain("Dragon"); // CHART_STRONG_WOOD.zodiac
+      expect(glance.body).toContain(CHART_STRONG_WOOD.zodiac);
       const balance = reading.cards.find((c) => c.id === "element-balance")!;
-      expect(balance.mechanics).toContain("Wood 3"); // dominant element count from fixture
+      const dom = dominantElement(CHART_STRONG_WOOD.elements);
+      expect(balance.mechanics).toContain(`${ELEMENT_LABEL[dom]} ${CHART_STRONG_WOOD.elements[dom]}`); // dominant element count from fixture
     });
 
     it("closes on an agency / what-to-do note (anti-fatalism, PRD acceptance criterion)", async () => {

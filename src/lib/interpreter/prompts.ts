@@ -12,7 +12,7 @@
  * competitor study (see research/english-market-competitors.md — FateTell's
  * "localized, not native" weakness).
  */
-import type { Chart, Element } from "./chart-types";
+import type { Chart, Element } from "@/lib/bazi";
 import type { CardSpec } from "./card-specs";
 import type { RelationFacts, Reading, ChatMessage } from "./types";
 import { ELEMENT_LABEL, elementRelation, parseGanZhi } from "./five-elements";

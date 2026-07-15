@@ -45,7 +45,7 @@ describe("buildCardPrompt", () => {
     const prompt = buildCardPrompt(CHART_STRONG_WOOD, CARD_SPECS[0]);
     expect(prompt).toContain(CHART_STRONG_WOOD.dayMaster.stem);
     expect(prompt).toContain(CHART_STRONG_WOOD.zodiac);
-    expect(prompt).toContain('"wood": 3'); // exact element count from the fixture, verbatim in the JSON block
+    expect(prompt).toContain(`"wood": ${CHART_STRONG_WOOD.elements.wood}`); // exact element count from the fixture, verbatim in the JSON block
   });
 
   it("differs per chart (no hardcoded chart facts)", () => {
