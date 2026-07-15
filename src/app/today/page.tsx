@@ -1,17 +1,64 @@
 import type { Metadata } from "next";
-import { StubPage } from "@/components/stub-page";
+import { DateTime } from "luxon";
+import { Eyebrow, Section } from "@/components/ui";
+import { db } from "@/lib/db";
+import type { Chart } from "@/lib/interpreter/types";
+import { getSessionUserId } from "@/lib/session";
+import { DailyCard } from "./daily-card";
+import { TodayEmptyState } from "./empty-state";
+import { loadDailyFortune } from "./lib";
 
 export const metadata: Metadata = {
   title: "Today · Cinnabar",
 };
 
-export default function TodayPage() {
+function formatLongDate(dateStr: string): string {
+  const dt = DateTime.fromISO(dateStr, { zone: "utc" });
+  return dt.isValid ? dt.toFormat("cccc, LLLL d, yyyy") : dateStr;
+}
+
+export default async function TodayPage() {
+  const userId = await getSessionUserId();
+
+  // No session yet, or a session with no saved self profile / cached chart:
+  // there's no Day Master to weigh today's day pillar against yet (PRD
+  // §5.4's flow — never gate the first "aha" behind auth, but this feature
+  // genuinely has nothing to show without a chart).
+  const profile = userId
+    ? await db.profile.findFirst({
+        where: { userId, isSelf: true, chartCache: { not: null } },
+        orderBy: { createdAt: "desc" },
+      })
+    : null;
+
+  if (!profile || !profile.chartCache) {
+    return <TodayEmptyState />;
+  }
+
+  const chart = JSON.parse(profile.chartCache) as Chart;
+  const result = await loadDailyFortune(profile.id, chart, profile.tzId);
+
   return (
-    <StubPage
-      glyph="曆"
-      eyebrow="Coming in M4"
-      title="Today's fortune is still being cast."
-      body="A short, personalized read tied to today's real energy — today's 干支 day pillar interacting with your Day Master — plus a concrete lean-into and go-easy-on for the day. One card a day, worth screenshotting."
-    />
+    <Section className="flex flex-col gap-10 py-16 sm:py-24">
+      <div className="flex flex-col gap-3">
+        <Eyebrow>曆 · Daily Fortune</Eyebrow>
+        <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
+          Today
+        </h1>
+        <p className="font-mono text-xs text-faint">
+          {formatLongDate(result.today.date)} · {profile.name ? `Cast for ${profile.name}` : "Cast for you"} ·{" "}
+          {chart.dayMaster.stemPinyin} {chart.dayMaster.stem} Day Master
+        </p>
+      </div>
+
+      <DailyCard
+        fortune={result.fortune}
+        today={result.today}
+        dayMasterRelation={result.dayMasterRelation}
+        interaction={result.interaction}
+        castAt={result.castAt}
+        tzId={profile.tzId}
+      />
+    </Section>
   );
 }
