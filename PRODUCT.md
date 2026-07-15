@@ -37,7 +37,7 @@ Three-word personality: **grounded, warm, direct.**
 - **Fear-marketed or cluttered incumbents** (the Chinese-market apps this product studied): dense grids, doom-forward copy, no onboarding for a reader with zero vocabulary. Cinnabar leads with plain English, never fatalism.
 - **Localized-not-native AI voice**: translated-Chinese phrasing tells, generic horoscope filler that ignores the reader's actual chart. Every line must be traceable to the reader's real pillars.
 - **Bare-calculator tools**: correct output with no packaging, warmth, or narrative — respected by practitioners, useless to a first-time visitor.
-- **Generic AI-tool visual tells**: purple-galaxy gradients, glowing crystal-ball clichés, glassmorphism, neon-on-black. See DESIGN.md for the full visual anti-pattern list this product actively avoids.
+- **Generic AI-tool visual tells**: purple-galaxy gradients, glowing crystal-ball clichés, glassmorphism, neon-on-black. See DESIGN.md (**朱墨 — Cinnabar & Ink**: near-white washi paper, sumi ink, one cinnabar seal, light by default) for the full visual anti-pattern list this product actively avoids.
 - **Dark-pattern monetization**: freemium placements are designed into the UI, never enforced through guilt, urgency copy, or hidden cancellation flows.
 
 ## Design Principles

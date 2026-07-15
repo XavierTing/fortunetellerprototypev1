@@ -23,12 +23,12 @@ function getSnapshot(): Theme {
 }
 
 // SSR has no DOM/localStorage to read, and the pre-hydration script hasn't
-// run yet on the server — match it to the same "dark" default the CSS
-// itself uses in the absence of any signal (see globals.css's theme
+// run yet on the server — match it to the same "light" (washi) default the
+// CSS itself uses in the absence of any signal (see globals.css's theme
 // precedence comment), then let useSyncExternalStore swap in the real
 // client value with no hydration-mismatch warning.
 function getServerSnapshot(): Theme {
-  return "dark";
+  return "light";
 }
 
 /** Toggles `data-theme` on <html> and persists the choice to localStorage. */
@@ -50,7 +50,7 @@ export function ThemeToggle() {
         theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
       }
       title="Toggle theme"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-muted transition-colors duration-200 ease-out-expo hover:border-hairline-gold hover:text-gold"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-muted transition-colors duration-300 ease-out-expo hover:border-cinnabar/40 hover:text-cinnabar"
     >
       {theme === "dark" ? <MoonIcon /> : <SunIcon />}
     </button>

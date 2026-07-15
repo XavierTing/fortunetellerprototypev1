@@ -3,25 +3,32 @@ import { cn } from "./cn";
 
 export type AccentVariant = "neutral" | "gold" | "cinnabar" | "jade";
 
+/**
+ * 朱墨 has exactly one accent — cinnabar, used like a hanko seal. "gold"
+ * and "jade" are legacy variant names kept for prop-API compatibility (the
+ * out-of-scope reading/today/match routes still pass them for "premium"
+ * and "favorable" states); both now render as quiet ink-soft, not a second
+ * or third accent hue. Only "cinnabar" is the true accent color.
+ */
 const RING: Record<AccentVariant, string> = {
   neutral: "border-hairline",
-  gold: "border-hairline-gold",
+  gold: "border-hairline",
   cinnabar: "border-cinnabar/40",
-  jade: "border-jade/40",
+  jade: "border-hairline",
 };
 
 const TEXT: Record<AccentVariant, string> = {
   neutral: "text-muted",
-  gold: "text-gold",
+  gold: "text-ink-soft",
   cinnabar: "text-cinnabar",
-  jade: "text-jade",
+  jade: "text-ink-soft",
 };
 
 const DOT: Record<AccentVariant, string> = {
   neutral: "bg-faint",
-  gold: "bg-gold",
+  gold: "bg-ink-soft",
   cinnabar: "bg-cinnabar",
-  jade: "bg-jade",
+  jade: "bg-ink-soft",
 };
 
 interface AccentProps extends HTMLAttributes<HTMLSpanElement> {
@@ -31,9 +38,9 @@ interface AccentProps extends HTMLAttributes<HTMLSpanElement> {
 
 /**
  * Badge — pill with a status dot. Use for state: "favorable", "coming
- * soon", "live". `variant` maps to the three-accent palette (gold =
- * premium/featured, cinnabar = attention/identity, jade = positive) plus
- * a neutral default — don't invent a fourth ad-hoc color.
+ * soon", "live". `variant` keeps its four legacy names for compatibility,
+ * but only "cinnabar" carries real accent color now — reach for it before
+ * inventing a new hue; "gold"/"jade"/"neutral" are all quiet ink tones.
  */
 export function Badge({
   variant = "neutral",

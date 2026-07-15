@@ -32,11 +32,12 @@ interface SectionHeadProps {
  * Garamond, heavier than the hero per the weight-inversion pattern: hero is
  * thin because it can breathe, section anchors carry more weight to ground
  * the block). Eyebrow is opt-in and should be used on at most one section
- * per page.
+ * per page. Generous gap (16px) between title and sub — 朱墨 leaves the
+ * white alone rather than stacking lines tightly.
  */
 export function SectionHead({ eyebrow, title, sub, className }: SectionHeadProps) {
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
+    <div className={cn("flex flex-col gap-4", className)}>
       {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
       <h2 className="text-[clamp(1.9rem,3.2vw,2.75rem)] font-medium leading-[1.1] tracking-[-0.01em] text-ink">
         {title}

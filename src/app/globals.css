@@ -1,61 +1,84 @@
 @import "tailwindcss";
 
 /*
- * Cinnabar design tokens — "Lacquer · Gold · Cinnabar"
+ * 朱墨 — Cinnabar & Ink design tokens
  *
- * A premium East-Asian luxury-material system: warm dark lacquer (漆) ground,
- * gold leaf (金箔) as the primary accent, cinnabar red (朱砂 — the brand
- * namesake) as the signature accent, jade (翡翠) reserved for positive/growth
- * signals. The physical scene: consulting an oracle in a dim, candlelit,
- * lacquer-and-gold room. Dark is the deliberate default; a "rice paper"
- * light mode is fully committed (not a same-page toggle afterthought), but
- * intentionally NOT the default — see the anti-cream rule this file exists
- * to satisfy.
+ * A light, zen, ink-on-paper system: near-white washi (rice paper) ground,
+ * warm sumi (墨) ink for text, one vermilion cinnabar (朱砂) seal used the
+ * way a hanko stamp is used — sparingly, for identity and the one primary
+ * action. Everything else is ink on paper. See
+ * docs/design/2026-07-15-zhu-mo-cinnabar-ink.md for the full spec this file
+ * implements, and DESIGN.md for the component-level doctrine built on it.
  *
- * CSS custom properties on :root are the source of truth (declared in raw,
- * un-prefixed form, e.g. `--gold`, so they read as a portable token
- * vocabulary independent of Tailwind). The `@theme inline` block re-exposes
- * them as Tailwind utilities (bg-gold, text-cinnabar, font-display, ...)
- * without freezing their values at build time, so runtime theme switching
- * keeps working even though Tailwind v4 generates utility CSS ahead of time.
+ * This supersedes the previous "Lacquer · Gold · Cinnabar" dark-default
+ * system. CRITICAL CHANGE: light "washi" is now the default — the anti-cream
+ * rule that system shipped with is retired along with it. A calm, warm
+ * "night ink" dark mode remains fully committed as the alternate, not a
+ * token gesture.
  *
- * Theme precedence (dark → light):
- *   1. :root                                     — dark (default; no cream/paper ground)
- *   2. @media (prefers-color-scheme: light) :root — OS-level light, no explicit choice
- *   3. :root[data-theme="dark" | "light"]         — explicit user choice, always wins
+ * CSS custom properties on :root are the source of truth (raw, un-prefixed
+ * names, e.g. `--paper`, `--ink`, `--cinnabar`), independent of Tailwind.
+ * The `@theme inline` block re-exposes them as Tailwind utilities (bg-paper,
+ * text-cinnabar, font-display, ...) that reference the *runtime* custom
+ * property rather than a value frozen at build time, so the light/night
+ * swap below keeps working against statically-generated Tailwind CSS.
+ *
+ * Theme precedence (light → dark):
+ *   1. :root                                    — washi light (DEFAULT)
+ *   2. @media (prefers-color-scheme: dark) :root — OS-level dark, no explicit choice
+ *   3. :root[data-theme="light" | "dark"]        — explicit user choice, always wins
  *      (an attribute selector on :root is more specific than a bare :root
  *      selector, so #3 beats #2 regardless of source order or media state)
  *
- * DESIGN.md documents every token, the two-face type system, and the
- * component kit built on top of this file (src/components/ui/).
+ * Contrast: every ink/muted/faint-on-paper and paper-on-cinnabar pairing
+ * below was checked with real WCAG contrast math (OKLCH → linear sRGB →
+ * relative luminance), not eyeballed — body text clears 4.5:1, large text
+ * and fills clear 3:1, in BOTH themes. One deliberate, documented deviation
+ * from the spec's literal numbers: `--faint` is tuned a few points darker
+ * (light) / lighter (dark) than the spec's suggested value so it still
+ * clears 4.5:1 where components render it as real small text (nav labels,
+ * footer links, field labels) rather than treating it as a decorative-only
+ * tier exempt from AA.
  */
 
 :root {
-  /* ---- Lacquer · Gold · Cinnabar — DARK (default) -------------------- */
-  --lacquer: oklch(11% 0.014 40);
-  --lacquer-deep: oklch(7% 0.012 40);
-  --raised: oklch(15% 0.014 40);
-  --graphite: oklch(20% 0.012 45);
+  /* ---- 朱墨 — washi LIGHT (DEFAULT) ------------------------------------ */
+  --paper: oklch(96.5% 0.006 90); /* ground — warm rice paper, low chroma */
+  --paper-deep: oklch(94% 0.007 88); /* raised/panel surfaces */
+  --paper-sink: oklch(92% 0.008 88); /* insets — input fields, wells */
 
-  --gold: oklch(80% 0.128 85);
-  --gold-rich: oklch(72% 0.12 82);
-  --gold-pale: oklch(88% 0.07 88);
+  --ink: oklch(22% 0.012 60); /* text — warm sumi near-black, never pure #000 */
+  --ink-soft: oklch(38% 0.011 60); /* body copy, one step softer than headings */
+  --muted: oklch(50% 0.009 60); /* captions, meta */
+  --faint: oklch(54% 0.007 60); /* subdued labels — tuned from spec's 62% for AA, see file header */
 
-  --cinnabar: oklch(63% 0.19 33);
-  --cinnabar-deep: oklch(55% 0.18 32);
-  --glow-cinnabar: oklch(63% 0.19 33 / 0.12);
+  --cinnabar: oklch(52% 0.19 33); /* the ONLY accent — the seal */
+  --cinnabar-deep: oklch(46% 0.17 32); /* hover/active/pressed */
+  --seal: var(--cinnabar);
 
-  --jade: oklch(74% 0.09 168);
+  --hairline: oklch(22% 0.012 60 / 0.12);
+  --glow-cinnabar: oklch(52% 0.19 33 / 0.05); /* one ambient moment, not a reusable surface */
 
-  --ink: oklch(93% 0.006 70);
-  --text: oklch(88% 0.005 70);
-  --muted: oklch(72% 0.004 70);
-  --faint: oklch(60% 0.004 70);
+  color-scheme: light;
 
-  --hairline: oklch(88% 0 0 / 0.12);
-  --hairline-gold: oklch(80% 0.09 85 / 0.5);
+  /* ---- Legacy token aliases (Lacquer · Gold · Cinnabar names) ----------
+   * Untouched feature routes (reading/master/today/match/me/why — a later
+   * task's scope) still reference these names. Keep them resolving to a
+   * sensible ink/cinnabar value instead of deleting, so those routes
+   * reskin for free instead of losing all color. See DESIGN.md's
+   * migration note. */
+  --lacquer: var(--paper);
+  --lacquer-deep: var(--paper);
+  --raised: var(--paper-deep);
+  --graphite: var(--paper-sink);
+  --text: var(--ink-soft);
 
-  color-scheme: dark;
+  --gold: var(--cinnabar);
+  --gold-rich: var(--cinnabar-deep);
+  --gold-pale: var(--cinnabar);
+  --hairline-gold: var(--hairline);
+
+  --jade: var(--ink-soft);
 
   /* ---- Type (theme-independent — next/font vars set on <html>) ------- */
   --font-display: var(--font-cormorant), "Iowan Old Style", Georgia, serif;
@@ -63,149 +86,177 @@
     Helvetica, Arial, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
+  /* Chinese glyph anchors (八字, 命, 五行, 干支, 木火土金水) — real semantic
+     anchors set beside English, not decoration. */
+  --font-cjk: var(--font-notoserifsc), "Songti SC", "STSong", serif;
+  /* One dramatic hand-brushed character per key screen. Falls back to the
+     CJK serif (not Cormorant) so an un-loaded state still reads as ink. */
+  --font-brush: var(--font-mashanzheng), var(--font-cjk);
 
-  /* ---- Motion ---------------------------------------------------------
-   * One easing curve, everywhere: ease-out-expo. No bounce, no elastic. */
+  /* ---- Motion — slow ink, one curve everywhere ------------------------
+   * ease-out-expo. Reveals bleed in over ~600-800ms; nothing bounces. */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    /* ---- Lacquer · Gold · Cinnabar — "rice paper" LIGHT ------------- */
-    --lacquer: oklch(96% 0.012 85);
-    --lacquer-deep: oklch(93% 0.014 85);
-    --raised: oklch(99% 0.007 85);
-    --graphite: oklch(91% 0.012 85);
+    /* ---- 朱墨 — "night ink" DARK (optional, calm not gloomy) --------- */
+    --paper: oklch(16% 0.006 60); /* warm sumi-black ground, never pure black */
+    --paper-deep: oklch(20% 0.007 60); /* raised/panel — lighter than ground */
+    --paper-sink: oklch(12% 0.006 60); /* insets — darker than ground */
 
-    /* Gold-by-size rule: on paper, gold is deepened so it still clears
-       3:1 at large display/fill sizes. It is never used for small accent
-       text here — see the cinnabar override below and DESIGN.md §3. */
-    --gold: oklch(60% 0.13 84);
-    --gold-rich: oklch(54% 0.135 82);
-    --gold-pale: oklch(90% 0.05 86);
+    --ink: oklch(90% 0.006 85); /* brightened so text reads calm, not dim */
+    --ink-soft: oklch(78% 0.008 80);
+    --muted: oklch(64% 0.008 75);
+    --faint: oklch(58% 0.007 70);
 
-    /* Deepened so small text/links clear 4.5:1 on paper (was 63% for dark
-       fills). Same hue, same brand color, tuned for the lighter ground. */
-    --cinnabar: oklch(52% 0.17 33);
-    --cinnabar-deep: oklch(45% 0.16 32);
-    --glow-cinnabar: oklch(52% 0.17 33 / 0.05);
+    --cinnabar: oklch(64% 0.19 33); /* brightened for the dark ground */
+    --cinnabar-deep: oklch(58% 0.18 32);
+    --seal: var(--cinnabar);
 
-    --jade: oklch(42% 0.11 165);
+    --hairline: oklch(90% 0.006 85 / 0.14);
+    --glow-cinnabar: oklch(64% 0.19 33 / 0.12);
 
-    --ink: oklch(24% 0.02 50);
-    --text: oklch(30% 0.02 50);
-    --muted: oklch(45% 0.015 50);
-    --faint: oklch(56% 0.013 50);
+    color-scheme: dark;
 
-    --hairline: oklch(24% 0.02 50 / 0.14);
-    --hairline-gold: oklch(50% 0.1 84 / 0.55);
+    --lacquer: var(--paper);
+    --lacquer-deep: var(--paper);
+    --raised: var(--paper-deep);
+    --graphite: var(--paper-sink);
+    --text: var(--ink-soft);
 
-    color-scheme: light;
+    --gold: var(--cinnabar);
+    --gold-rich: var(--cinnabar-deep);
+    --gold-pale: var(--cinnabar);
+    --hairline-gold: var(--hairline);
+
+    --jade: var(--ink-soft);
   }
 }
 
-:root[data-theme="dark"] {
-  --lacquer: oklch(11% 0.014 40);
-  --lacquer-deep: oklch(7% 0.012 40);
-  --raised: oklch(15% 0.014 40);
-  --graphite: oklch(20% 0.012 45);
-
-  --gold: oklch(80% 0.128 85);
-  --gold-rich: oklch(72% 0.12 82);
-  --gold-pale: oklch(88% 0.07 88);
-
-  --cinnabar: oklch(63% 0.19 33);
-  --cinnabar-deep: oklch(55% 0.18 32);
-  --glow-cinnabar: oklch(63% 0.19 33 / 0.12);
-
-  --jade: oklch(74% 0.09 168);
-
-  --ink: oklch(93% 0.006 70);
-  --text: oklch(88% 0.005 70);
-  --muted: oklch(72% 0.004 70);
-  --faint: oklch(60% 0.004 70);
-
-  --hairline: oklch(88% 0 0 / 0.12);
-  --hairline-gold: oklch(80% 0.09 85 / 0.5);
-
-  color-scheme: dark;
-}
-
 :root[data-theme="light"] {
-  --lacquer: oklch(96% 0.012 85);
-  --lacquer-deep: oklch(93% 0.014 85);
-  --raised: oklch(99% 0.007 85);
-  --graphite: oklch(91% 0.012 85);
+  --paper: oklch(96.5% 0.006 90);
+  --paper-deep: oklch(94% 0.007 88);
+  --paper-sink: oklch(92% 0.008 88);
 
-  --gold: oklch(60% 0.13 84);
-  --gold-rich: oklch(54% 0.135 82);
-  --gold-pale: oklch(90% 0.05 86);
+  --ink: oklch(22% 0.012 60);
+  --ink-soft: oklch(38% 0.011 60);
+  --muted: oklch(50% 0.009 60);
+  --faint: oklch(54% 0.007 60);
 
-  --cinnabar: oklch(52% 0.17 33);
-  --cinnabar-deep: oklch(45% 0.16 32);
-  --glow-cinnabar: oklch(52% 0.17 33 / 0.05);
+  --cinnabar: oklch(52% 0.19 33);
+  --cinnabar-deep: oklch(46% 0.17 32);
+  --seal: var(--cinnabar);
 
-  --jade: oklch(42% 0.11 165);
-
-  --ink: oklch(24% 0.02 50);
-  --text: oklch(30% 0.02 50);
-  --muted: oklch(45% 0.015 50);
-  --faint: oklch(56% 0.013 50);
-
-  --hairline: oklch(24% 0.02 50 / 0.14);
-  --hairline-gold: oklch(50% 0.1 84 / 0.55);
+  --hairline: oklch(22% 0.012 60 / 0.12);
+  --glow-cinnabar: oklch(52% 0.19 33 / 0.05);
 
   color-scheme: light;
+
+  --lacquer: var(--paper);
+  --lacquer-deep: var(--paper);
+  --raised: var(--paper-deep);
+  --graphite: var(--paper-sink);
+  --text: var(--ink-soft);
+
+  --gold: var(--cinnabar);
+  --gold-rich: var(--cinnabar-deep);
+  --gold-pale: var(--cinnabar);
+  --hairline-gold: var(--hairline);
+
+  --jade: var(--ink-soft);
+}
+
+:root[data-theme="dark"] {
+  --paper: oklch(16% 0.006 60);
+  --paper-deep: oklch(20% 0.007 60);
+  --paper-sink: oklch(12% 0.006 60);
+
+  --ink: oklch(90% 0.006 85);
+  --ink-soft: oklch(78% 0.008 80);
+  --muted: oklch(64% 0.008 75);
+  --faint: oklch(58% 0.007 70);
+
+  --cinnabar: oklch(64% 0.19 33);
+  --cinnabar-deep: oklch(58% 0.18 32);
+  --seal: var(--cinnabar);
+
+  --hairline: oklch(90% 0.006 85 / 0.14);
+  --glow-cinnabar: oklch(64% 0.19 33 / 0.12);
+
+  color-scheme: dark;
+
+  --lacquer: var(--paper);
+  --lacquer-deep: var(--paper);
+  --raised: var(--paper-deep);
+  --graphite: var(--paper-sink);
+  --text: var(--ink-soft);
+
+  --gold: var(--cinnabar);
+  --gold-rich: var(--cinnabar-deep);
+  --gold-pale: var(--cinnabar);
+  --hairline-gold: var(--hairline);
+
+  --jade: var(--ink-soft);
 }
 
 /*
  * Tailwind v4 utility wiring. `@theme inline` tells Tailwind to generate
- * utilities (bg-lacquer, text-gold, border-cinnabar, font-display, ...)
+ * utilities (bg-paper, text-cinnabar, border-hairline, font-display, ...)
  * that reference the *runtime* custom property rather than a value frozen
  * at build time — required for the light/dark swap above to work against
  * statically-generated Tailwind CSS.
  */
 @theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-paper-sink: var(--paper-sink);
+
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+
+  --color-cinnabar: var(--cinnabar);
+  --color-cinnabar-deep: var(--cinnabar-deep);
+  --color-seal: var(--seal);
+
+  --color-hairline: var(--hairline);
+
+  /* Legacy aliases: out-of-scope feature routes (reading/master/today/
+     match/me/why) and the orphaned src/components/stub-page.tsx reference
+     lacquer/raised/graphite/gold/jade/paper/panel/line/brass utilities.
+     Keep them resolving to the new tokens so they reskin for free instead
+     of losing all color. */
   --color-lacquer: var(--lacquer);
   --color-lacquer-deep: var(--lacquer-deep);
   --color-raised: var(--raised);
   --color-graphite: var(--graphite);
+  --color-text: var(--text);
 
   --color-gold: var(--gold);
   --color-gold-rich: var(--gold-rich);
   --color-gold-pale: var(--gold-pale);
-
-  --color-cinnabar: var(--cinnabar);
-  --color-cinnabar-deep: var(--cinnabar-deep);
+  --color-hairline-gold: var(--hairline-gold);
 
   --color-jade: var(--jade);
 
-  --color-ink: var(--ink);
-  --color-text: var(--text);
-  --color-muted: var(--muted);
-  --color-faint: var(--faint);
-
-  --color-hairline: var(--hairline);
-  --color-hairline-gold: var(--hairline-gold);
-
-  /* Legacy aliases: T0's stub pages (src/app/{master,today,match,me},
-     src/components/stub-page.tsx — out of this task's scope) reference
-     paper/panel/line/brass utilities. Keep them resolving to the new
-     tokens so they reskin for free instead of losing all color. */
-  --color-paper: var(--lacquer);
-  --color-panel: var(--raised);
+  --color-panel: var(--paper-deep);
   --color-line: var(--hairline);
-  --color-brass: var(--gold);
+  --color-brass: var(--cinnabar);
 
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
+  --font-cjk: var(--font-cjk);
+  --font-brush: var(--font-brush);
   /* Legacy aliases (same reasoning as above). */
   --font-serif: var(--font-display);
   --font-sans: var(--font-body);
 
   --ease-out-expo: var(--ease);
-  --animate-rise-in: rise-in 700ms var(--ease) both;
+  --animate-rise-in: rise-in 750ms var(--ease) both;
+  --animate-seal-stamp: seal-stamp 600ms var(--ease) both;
 }
 
 * {
@@ -217,10 +268,11 @@ html {
 }
 
 body {
-  background: var(--lacquer);
-  color: var(--text);
+  background: var(--paper);
+  color: var(--ink-soft);
   font-family: var(--font-body);
   font-feature-settings: "kern" 1, "liga" 1;
+  line-height: 1.7;
 }
 
 h1,
@@ -237,7 +289,7 @@ p {
 
 ::selection {
   background: var(--cinnabar);
-  color: var(--lacquer-deep);
+  color: var(--paper);
 }
 
 :focus-visible {
@@ -253,6 +305,19 @@ p {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* The seal "stamps" on — a small settle, never a bounce. Reserved for the
+   cinnabar hanko mark (see src/components/ui/seal.tsx). */
+@keyframes seal-stamp {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

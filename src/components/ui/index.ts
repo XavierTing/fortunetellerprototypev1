@@ -19,5 +19,8 @@ export { Field, Input } from "./field";
 
 export { PaywallSlot } from "./paywall-slot";
 
+export { Seal } from "./seal";
+export type { SealShape, SealSize } from "./seal";
+
 export { cn } from "./cn";
 export type { ClassValue } from "./cn";

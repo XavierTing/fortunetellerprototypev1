@@ -9,12 +9,15 @@ type CardProps<T extends ElementType> = {
 /**
  * Card — the one flat surface primitive. Hairline border, small radius
  * (12px — inside the 6-14px card range, never the 24px+ "insanely
- * rounded" look), raised-lacquer/raised-paper fill, no default shadow
- * (this system is hairline-first: borders before shadow).
+ * rounded" look), paper-deep fill, no default shadow (this system is
+ * hairline-first: borders before shadow). Generous default padding (32px)
+ * over the old system's 24px — 朱墨 leans into whitespace; "leave the
+ * white alone" applies inside a card too, not just around it.
  *
  * Never nest a Card inside a Card. If content needs internal grouping,
- * use spacing and hairline dividers, not another bordered box. `as` lets
- * a Card render as `<li>`/`<article>` etc. when it's part of a list.
+ * use spacing and hairline dividers, not another bordered box — and never
+ * a side-stripe border as a colored accent. `as` lets a Card render as
+ * `<li>`/`<article>` etc. when it's part of a list.
  */
 export function Card<T extends ElementType = "div">({
   as,
@@ -25,7 +28,7 @@ export function Card<T extends ElementType = "div">({
   return (
     <Comp
       className={cn(
-        "rounded-xl border border-hairline bg-raised p-6",
+        "rounded-xl border border-hairline bg-paper-deep p-8",
         className,
       )}
       {...rest}

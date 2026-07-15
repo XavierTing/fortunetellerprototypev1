@@ -28,13 +28,14 @@ interface PaywallSlotProps {
  *
  * Deliberately restrained per DESIGN.md: a dashed top hairline (not a
  * side-stripe — those are a named anti-pattern) and the kit's existing
- * gold "Premium" tag vocabulary (Badge's own doc comment: "gold =
- * premium/featured") rather than an invented banner/ribbon treatment.
+ * "Premium" tag vocabulary (Badge/Tag's legacy "gold" variant, now a quiet
+ * ink tone in 朱墨 — see badge.tsx) rather than an invented banner/ribbon
+ * treatment.
  */
 export function PaywallSlot({ label, note, children, className }: PaywallSlotProps) {
   return (
-    <div className={cn("flex flex-col gap-4", className)}>
-      <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 border-t border-dashed border-hairline-gold pt-5">
+    <div className={cn("flex flex-col gap-5", className)}>
+      <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 border-t border-dashed border-hairline pt-6">
         <Tag variant="gold">Premium</Tag>
         <span className="font-mono text-[0.66rem] font-medium tracking-[0.1em] text-faint uppercase">{label}</span>
         {note ? <span className="text-xs leading-relaxed text-faint">{note}</span> : null}

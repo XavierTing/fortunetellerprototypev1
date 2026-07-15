@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Badge, Button, Card, Eyebrow, Field, Input, Section, SectionHead } from "@/components/ui";
+import { Hero } from "./hero";
 
 const FEATURES = [
   {
@@ -32,58 +33,47 @@ export default function HomePage() {
   return (
     <>
       <div className="relative overflow-hidden">
-        {/* Watermark: the brand's own character, held at near-invisible
-            opacity — a material texture (gold leaf catching light at an
-            angle), not an illustration. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-20 -right-10 select-none font-display text-[24rem] leading-none font-light text-gold/5 sm:text-[30rem]"
-        >
-          朱
-        </span>
-        {/* A single low, off-center warm glow — candlelight in a lacquer
-            room, not a decorative corner-to-corner SaaS gradient. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            backgroundImage:
-              "radial-gradient(ellipse 55% 45% at 16% 18%, var(--glow-cinnabar), transparent 70%)",
-          }}
-        />
+        {/* The hero's decorative ink composition lives in its own component
+            (src/app/hero.tsx) so a later task can swap it for an
+            interactive canvas without touching this page's copy. */}
+        <Hero />
 
-        <Section className="flex flex-col gap-7 py-24 sm:py-32">
+        <Section className="flex flex-col gap-8 py-28 sm:py-40">
           <div className="animate-rise-in flex items-center gap-3">
-            <Eyebrow>八字 · Four Pillars</Eyebrow>
+            <Eyebrow>
+              <span className="font-cjk">八字</span> · Four Pillars
+            </Eyebrow>
           </div>
 
           <h1
-            className="animate-rise-in max-w-3xl font-display text-[clamp(2.75rem,6.2vw,5.25rem)] font-light tracking-[-0.015em] text-ink"
-            style={{ animationDelay: "70ms", lineHeight: 1.05 }}
+            className="animate-rise-in max-w-2xl font-display text-[clamp(2.5rem,5.6vw,4.5rem)] font-light tracking-[-0.015em] text-ink"
+            style={{ animationDelay: "80ms", lineHeight: 1.15 }}
           >
-            Your birth hour, written in{" "}
-            <span className="text-cinnabar">cinnabar</span>.
+            Your fate is already written.
+            <br />
+            We only read it aloud.
           </h1>
 
           <p
-            className="animate-rise-in max-w-xl font-display text-[1.4rem] text-muted"
-            style={{ animationDelay: "150ms" }}
+            className="animate-rise-in max-w-[34rem] font-display text-[1.4rem] text-muted"
+            style={{ animationDelay: "160ms" }}
           >
             Chinese astrology, in plain English.
           </p>
 
           <p
-            className="animate-rise-in max-w-[62ch] text-[1.05rem] leading-relaxed text-muted"
-            style={{ animationDelay: "220ms" }}
+            className="animate-rise-in max-w-[34rem] text-[1.02rem] leading-[1.8] text-muted"
+            style={{ animationDelay: "230ms" }}
           >
-            Every reading starts from your exact birth date, time, and place —
-            resolved to true solar time, not a rounded-off horoscope. Four
-            Pillars, computed correctly, and explained the way a smart,
-            honest friend would: no jargon walls, no doom, no crystal balls.
+            Every reading begins with your exact birth date, time, and
+            place — resolved to true solar time, not a rounded-off
+            horoscope. Four Pillars, computed correctly, and read the way a
+            quiet, honest teacher would: no jargon walls, no doom, no
+            crystal balls.
           </p>
 
           <div
-            className="animate-rise-in flex flex-wrap items-center gap-4 pt-2"
+            className="animate-rise-in flex flex-wrap items-center gap-5 pt-3"
             style={{ animationDelay: "300ms" }}
           >
             <Button href="/reading/new">
@@ -96,22 +86,22 @@ export default function HomePage() {
         </Section>
       </div>
 
-      <Section className="border-t border-hairline py-20">
+      <Section className="border-t border-hairline py-24">
         <SectionHead
           title="What Cinnabar reads"
           sub="Four ways in, one grounded chart underneath."
         />
 
-        <div className="mt-10 flex flex-col divide-y divide-hairline border-y border-hairline">
+        <div className="mt-12 flex flex-col divide-y divide-hairline border-y border-hairline">
           {FEATURES.map((feature) => (
             <Link
               key={feature.href}
               href={feature.href}
-              className="group flex items-center gap-5 py-6 transition-colors duration-200 ease-out-expo hover:bg-raised sm:gap-8"
+              className="group flex items-center gap-5 py-7 transition-colors duration-300 ease-out-expo hover:bg-paper-deep sm:gap-8"
             >
               <span
                 aria-hidden="true"
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-hairline font-display text-xl text-cinnabar"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-hairline font-cjk text-xl text-ink-soft transition-colors duration-300 ease-out-expo group-hover:text-cinnabar"
               >
                 {feature.glyph}
               </span>
@@ -125,7 +115,7 @@ export default function HomePage() {
               </span>
               <span
                 aria-hidden="true"
-                className="shrink-0 font-mono text-xs text-faint transition-colors duration-200 ease-out-expo group-hover:text-cinnabar"
+                className="shrink-0 font-mono text-xs text-faint transition-colors duration-300 ease-out-expo group-hover:text-cinnabar"
               >
                 →
               </span>
@@ -134,8 +124,8 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <Section id="reveal" className="scroll-mt-24 border-t border-hairline py-20">
-        <Card className="flex flex-col gap-8 p-8 sm:p-12">
+      <Section id="reveal" className="scroll-mt-24 border-t border-hairline py-24">
+        <Card className="flex flex-col gap-9 p-8 sm:p-12">
           <div className="flex flex-col gap-4">
             <Badge variant="jade">Free · no signup needed</Badge>
             <h2 className="font-display text-[clamp(1.9rem,3vw,2.5rem)] leading-tight font-medium text-ink">

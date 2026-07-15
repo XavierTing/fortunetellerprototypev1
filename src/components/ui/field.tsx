@@ -17,12 +17,12 @@ interface FieldProps {
  */
 export function Field({ label, htmlFor, hint, className, children, labelProps }: FieldProps) {
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       <label
         htmlFor={htmlFor}
         {...labelProps}
         className={cn(
-          "font-mono text-[0.68rem] font-medium uppercase tracking-[0.14em] text-faint",
+          "font-mono text-[0.68rem] font-medium tracking-[0.14em] text-faint uppercase",
           labelProps?.className,
         )}
       >
@@ -35,14 +35,15 @@ export function Field({ label, htmlFor, hint, className, children, labelProps }:
 }
 
 /**
- * Input — the one text-input surface: graphite fill (a step brighter than
- * the raised card it usually sits in), hairline border, gold focus ring.
+ * Input — the one text-input surface: paper-sink fill (an inset, a step
+ * quieter than the paper-deep card it usually sits in), hairline border,
+ * cinnabar focus ring — the seal color earns its one non-CTA use here.
  */
 export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       className={cn(
-        "h-11 rounded-lg border border-hairline bg-graphite px-3.5 text-[0.92rem] text-ink placeholder:text-faint outline-none transition-colors duration-200 ease-out-expo focus-visible:border-gold",
+        "h-11 rounded-lg border border-hairline bg-paper-sink px-3.5 text-[0.92rem] text-ink placeholder:text-faint outline-none transition-colors duration-300 ease-out-expo focus-visible:border-cinnabar",
         className,
       )}
       {...rest}
