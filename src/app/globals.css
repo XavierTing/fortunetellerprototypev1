@@ -23,12 +23,11 @@
  * property rather than a value frozen at build time, so the light/night
  * swap below keeps working against statically-generated Tailwind CSS.
  *
- * Theme precedence (light → dark):
- *   1. :root                                    — washi light (DEFAULT)
- *   2. @media (prefers-color-scheme: dark) :root — OS-level dark, no explicit choice
- *   3. :root[data-theme="light" | "dark"]        — explicit user choice, always wins
- *      (an attribute selector on :root is more specific than a bare :root
- *      selector, so #3 beats #2 regardless of source order or media state)
+ * Theme precedence:
+ *   1. :root                              — washi light, the COMMITTED default
+ *                                           (applies on EVERY OS; we do NOT
+ *                                           react to prefers-color-scheme)
+ *   2. :root[data-theme="dark"|"light"]   — explicit user toggle, always wins
  *
  * Contrast: every ink/muted/faint-on-paper and paper-on-cinnabar pairing
  * below was checked with real WCAG contrast math (OKLCH → linear sRGB →
@@ -102,41 +101,10 @@
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* ---- 朱墨 — "night ink" DARK (optional, calm not gloomy) --------- */
-    --paper: oklch(16% 0.006 60); /* warm sumi-black ground, never pure black */
-    --paper-deep: oklch(20% 0.007 60); /* raised/panel — lighter than ground */
-    --paper-sink: oklch(12% 0.006 60); /* insets — darker than ground */
-
-    --ink: oklch(90% 0.006 85); /* brightened so text reads calm, not dim */
-    --ink-soft: oklch(78% 0.008 80);
-    --muted: oklch(64% 0.008 75);
-    --faint: oklch(58% 0.007 70);
-
-    --cinnabar: oklch(64% 0.19 33); /* brightened for the dark ground */
-    --cinnabar-deep: oklch(58% 0.18 32);
-    --seal: var(--cinnabar);
-
-    --hairline: oklch(90% 0.006 85 / 0.14);
-    --glow-cinnabar: oklch(64% 0.19 33 / 0.12);
-
-    color-scheme: dark;
-
-    --lacquer: var(--paper);
-    --lacquer-deep: var(--paper);
-    --raised: var(--paper-deep);
-    --graphite: var(--paper-sink);
-    --text: var(--ink-soft);
-
-    --gold: var(--cinnabar);
-    --gold-rich: var(--cinnabar-deep);
-    --gold-pale: var(--cinnabar);
-    --hairline-gold: var(--hairline);
-
-    --jade: var(--ink-soft);
-  }
-}
+/* Light "washi" is the COMMITTED default on EVERY OS — we intentionally do
+ * NOT auto-switch to night-ink on `prefers-color-scheme: dark` (the reference
+ * aesthetic, 11-ink / teahouse, is committed light). Night-ink applies ONLY
+ * when the user explicitly toggles it — see :root[data-theme="dark"] below. */
 
 :root[data-theme="light"] {
   --paper: oklch(96.5% 0.006 90);

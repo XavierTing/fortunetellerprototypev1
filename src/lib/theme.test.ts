@@ -26,7 +26,7 @@ describe("isTheme", () => {
 });
 
 describe("THEME_STORAGE_KEY", () => {
-  it("is a stable, namespaced localStorage key", () => {
-    expect(THEME_STORAGE_KEY).toBe("cinnabar-theme");
+  it("is the versioned, namespaced localStorage key", () => {
+    expect(THEME_STORAGE_KEY).toBe("cinnabar-theme-2");
   });
 });
