@@ -1,26 +1,127 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Cinnabar design tokens — PRD §8.
+ *
+ * CSS custom properties on :root are the source of truth. The `@theme
+ * inline` block below re-exposes them as Tailwind utilities (bg-paper,
+ * text-ink, font-serif, ...) without freezing their values at build time,
+ * so theme switching still works even though Tailwind v4 generates the
+ * utility CSS ahead of time.
+ *
+ * Precedence (light → dark):
+ *   1. :root                                    — light (default)
+ *   2. @media (prefers-color-scheme: dark) :root — OS-level dark, no explicit choice
+ *   3. :root[data-theme="dark" | "light"]        — explicit user choice, always wins
+ *      (an attribute selector on :root is more specific than a bare :root
+ *      selector, so #3 beats #2 regardless of source order or media state)
+ */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --color-paper: #f2eee6;
+  --color-ink: #1c1e26;
+  --color-cinnabar: #b0392a;
+  --color-jade: #3c7466;
+  --color-brass: #a9832f;
+  --color-line: #dad3c4;
+  --color-panel: #f7f4ee;
+
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-paper: #14151a;
+    --color-ink: #ece7db;
+    --color-cinnabar: #e0705a;
+    --color-jade: #6fb1a0;
+    --color-brass: #cba659;
+    --color-line: #2a2c35;
+    --color-panel: #1e2029;
+
+    color-scheme: dark;
   }
 }
 
+:root[data-theme="dark"] {
+  --color-paper: #14151a;
+  --color-ink: #ece7db;
+  --color-cinnabar: #e0705a;
+  --color-jade: #6fb1a0;
+  --color-brass: #cba659;
+  --color-line: #2a2c35;
+  --color-panel: #1e2029;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --color-paper: #f2eee6;
+  --color-ink: #1c1e26;
+  --color-cinnabar: #b0392a;
+  --color-jade: #3c7466;
+  --color-brass: #a9832f;
+  --color-line: #dad3c4;
+  --color-panel: #f7f4ee;
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-ink: var(--color-ink);
+  --color-cinnabar: var(--color-cinnabar);
+  --color-jade: var(--color-jade);
+  --color-brass: var(--color-brass);
+  --color-line: var(--color-line);
+  --color-panel: var(--color-panel);
+
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-cinnabar);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-cinnabar);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

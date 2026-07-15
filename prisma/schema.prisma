@@ -1,0 +1,114 @@
+// Cinnabar — Prisma schema
+// See PRD.md §10 (Data Model) for the source of truth.
+//
+// SQLite (local prototype) has no native JSON type, so JSON-shaped fields
+// (chartCache, cards, content, personB, result) are stored as TEXT and
+// serialized/deserialized with JSON.stringify / JSON.parse at the call site.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+/// A person using the app. Anonymous sessions get a User row with no email
+/// (see src/lib/session.ts); email is only populated once/if we add real auth.
+model User {
+  id        String   @id @default(uuid())
+  email     String?  @unique
+  createdAt DateTime @default(now())
+
+  profiles Profile[]
+}
+
+/// A saved birth profile (self or someone else) that a chart can be computed for.
+model Profile {
+  id         String   @id @default(uuid())
+  userId     String
+  name       String?
+  birthDate  DateTime
+  birthTime  String? // "HH:mm", nullable when the user doesn't know their birth time
+  lat        Float
+  lng        Float
+  tzId       String // IANA timezone id, e.g. "America/New_York"
+  isSelf     Boolean  @default(false)
+  chartCache String? // JSON-serialized Chart, cached after the engine computes it
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readings         Reading[]
+  chatThreads      ChatThread[]
+  dailyFortunes    DailyFortune[]
+  compatibilityAs  CompatibilityPair[]
+
+  @@index([userId])
+}
+
+/// A generated natal reading (card-based) for a profile.
+model Reading {
+  id          String   @id @default(uuid())
+  profileId   String
+  cards       String // JSON-serialized Card[]
+  model       String // e.g. "deepseek-chat" or "mock"
+  generatedAt DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+/// A chat conversation with the 师傅 (Master), scoped to one profile.
+model ChatThread {
+  id        String   @id @default(uuid())
+  profileId String
+  createdAt DateTime @default(now())
+
+  profile  Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@index([profileId])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  threadId  String
+  role      String // "user" | "assistant" | "system"
+  content   String
+  createdAt DateTime @default(now())
+
+  thread ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+}
+
+/// A compatibility check between a saved profile (person A) and either
+/// another saved profile or an ad-hoc person (person B, no account required).
+model CompatibilityPair {
+  id        String   @id @default(uuid())
+  profileAId String
+  personB   String // JSON-serialized second-person birth data (and/or a profileId reference)
+  result    String // JSON-serialized compatibility reading
+  createdAt DateTime @default(now())
+
+  profileA Profile @relation(fields: [profileAId], references: [id], onDelete: Cascade)
+
+  @@index([profileAId])
+}
+
+/// One cached daily fortune per (profile, date).
+model DailyFortune {
+  id        String   @id @default(uuid())
+  profileId String
+  date      String // "YYYY-MM-DD", the civil date the fortune is for
+  content   String // JSON-serialized daily fortune content
+  createdAt DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, date])
+  @@index([profileId])
+}
