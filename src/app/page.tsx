@@ -86,7 +86,7 @@ export default function HomePage() {
             className="animate-rise-in flex flex-wrap items-center gap-4 pt-2"
             style={{ animationDelay: "300ms" }}
           >
-            <Button href="#reveal">
+            <Button href="/reading/new">
               Reveal your chart <span aria-hidden="true">→</span>
             </Button>
             <span className="font-mono text-[0.72rem] tracking-[0.08em] text-faint uppercase">
@@ -137,9 +137,9 @@ export default function HomePage() {
       <Section id="reveal" className="scroll-mt-24 border-t border-hairline py-20">
         <Card className="flex flex-col gap-8 p-8 sm:p-12">
           <div className="flex flex-col gap-4">
-            <Badge variant="gold">Coming in the next milestone</Badge>
+            <Badge variant="jade">Free · no signup needed</Badge>
             <h2 className="font-display text-[clamp(1.9rem,3vw,2.5rem)] leading-tight font-medium text-ink">
-              Your birth-chart form lives here next.
+              Your birth-chart form takes under a minute.
             </h2>
             <p className="max-w-2xl text-[1.02rem] leading-relaxed text-muted">
               Name (optional), your exact birth date &amp; time — or &ldquo;I
@@ -164,6 +164,10 @@ export default function HomePage() {
               <Input placeholder="—" disabled />
             </Field>
           </div>
+
+          <Button href="/reading/new" className="self-start">
+            Begin your reading <span aria-hidden="true">→</span>
+          </Button>
         </Card>
       </Section>
     </>
