@@ -1,17 +1,95 @@
 import type { Metadata } from "next";
-import { StubPage } from "@/components/stub-page";
+import { Button, Card, Eyebrow, Section } from "@/components/ui";
+import { db } from "@/lib/db";
+import { ELEMENT_LABEL } from "@/lib/interpreter/five-elements";
+import type { Chart } from "@/lib/interpreter/types";
+import { getSessionUserId } from "@/lib/session";
+import { ChatPanel } from "./chat-panel";
+import type { ChatWireMessage } from "./types";
 
 export const metadata: Metadata = {
-  title: "Master · Cinnabar",
+  title: "The Master · Cinnabar",
+  description: "Chat with your 师傅 about your chart in plain English — grounded in your actual pillars.",
 };
 
-export default function MasterPage() {
+function isChatRole(role: string): role is "user" | "assistant" {
+  return role === "user" || role === "assistant";
+}
+
+function EmptyState() {
   return (
-    <StubPage
-      glyph="師"
-      eyebrow="Coming in M3"
-      title="The Master is still finding his voice."
-      body="Soon you'll be able to ask your 师傅 follow-up questions about your chart in natural English — grounded in your actual pillars, never generic. Warm, wise, a little wry; never a sycophant or a doom-monger. Start with a reading first."
-    />
+    <Section className="flex flex-col gap-10 py-16 sm:py-24">
+      <div className="flex flex-col gap-4">
+        <Eyebrow>師傅 · The Master</Eyebrow>
+        <h1 className="max-w-xl font-display text-[clamp(2.25rem,5vw,3.5rem)] font-light leading-[1.05] tracking-[-0.015em] text-ink">
+          The master needs a chart to read.
+        </h1>
+      </div>
+
+      <Card className="flex max-w-2xl flex-col items-start gap-5 p-8 sm:p-10">
+        <span
+          aria-hidden="true"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border border-hairline font-display text-xl text-cinnabar"
+        >
+          師
+        </span>
+        <p className="max-w-[52ch] text-[1.02rem] leading-relaxed text-muted">
+          Reveal your chart first, then ask the master. Every answer is grounded in your actual pillars — there&apos;s
+          nothing to ground a conversation in until your chart exists. It takes under a minute.
+        </p>
+        <Button href="/reading/new">
+          Reveal your chart <span aria-hidden="true">→</span>
+        </Button>
+      </Card>
+    </Section>
+  );
+}
+
+export default async function MasterPage() {
+  const userId = await getSessionUserId();
+
+  const profile = userId
+    ? await db.profile.findFirst({
+        where: { userId, isSelf: true },
+        orderBy: { createdAt: "desc" },
+      })
+    : null;
+
+  if (!profile || !profile.chartCache) {
+    return <EmptyState />;
+  }
+
+  const chart = JSON.parse(profile.chartCache) as Chart;
+
+  const thread = await db.chatThread.findFirst({
+    where: { profileId: profile.id },
+    orderBy: { createdAt: "desc" },
+    include: { messages: { orderBy: { createdAt: "asc" } } },
+  });
+
+  const initialMessages: ChatWireMessage[] = (thread?.messages ?? [])
+    .filter((m) => isChatRole(m.role))
+    .map((m) => ({
+      id: m.id,
+      role: m.role as "user" | "assistant",
+      content: m.content,
+      createdAt: m.createdAt.toISOString(),
+    }));
+
+  return (
+    <Section className="flex flex-col gap-10 py-16 sm:py-24">
+      <div className="flex flex-col gap-3">
+        <Eyebrow>師傅 · The Master</Eyebrow>
+        <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
+          Ask your 师傅.
+        </h1>
+        <p className="max-w-[62ch] text-[1.02rem] leading-relaxed text-muted">
+          {profile.name ? `${profile.name}’s` : "Your"} chart, in conversation — a{" "}
+          {chart.dayMasterStrength} {ELEMENT_LABEL[chart.dayMaster.element]} Day Master, {chart.zodiac} year.
+        </p>
+      </div>
+
+      <ChatPanel profileId={profile.id} initialMessages={initialMessages} />
+    </Section>
   );
 }
