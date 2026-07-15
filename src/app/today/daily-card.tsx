@@ -61,11 +61,11 @@ export function DailyCard({
       as="article"
       id="daily-fortune-card"
       aria-label="Today's fortune"
-      className="animate-rise-in flex max-w-2xl flex-col gap-7 p-7 sm:p-10"
+      className="animate-rise-in flex max-w-2xl flex-col gap-8 p-7 sm:p-10"
     >
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-hairline pb-6">
-        <div className="flex items-baseline gap-3">
-          <span className="font-display text-3xl leading-none text-ink">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-hairline pb-7">
+        <div className="flex items-center gap-4">
+          <span aria-hidden="true" className="font-brush text-4xl leading-none text-cinnabar sm:text-5xl">
             {today.parsed.stem}
             {today.parsed.branch}
           </span>
@@ -91,17 +91,21 @@ export function DailyCard({
         </div>
       )}
 
-      <dl className="grid grid-cols-1 gap-6 border-t border-hairline pt-6 sm:grid-cols-3 sm:divide-x sm:divide-hairline">
-        <div className="flex flex-col gap-1.5 sm:pr-6">
-          <dt className="font-mono text-[0.68rem] font-medium tracking-[0.14em] text-faint uppercase">Energy</dt>
+      <dl className="flex flex-col divide-y divide-hairline border-t border-hairline">
+        <div className="flex flex-col gap-1.5 py-5 sm:flex-row sm:items-baseline sm:gap-8">
+          <dt className="font-mono text-[0.68rem] font-medium tracking-[0.14em] text-faint uppercase sm:w-40 sm:shrink-0">
+            Energy
+          </dt>
           <dd className="text-[0.95rem] leading-relaxed text-text">{fortune.energy}</dd>
         </div>
-        <div className="flex flex-col gap-1.5 sm:px-6">
-          <dt className="font-mono text-[0.68rem] font-medium tracking-[0.14em] text-jade uppercase">Lean into</dt>
+        <div className="flex flex-col gap-1.5 py-5 sm:flex-row sm:items-baseline sm:gap-8">
+          <dt className="font-mono text-[0.68rem] font-medium tracking-[0.14em] text-jade uppercase sm:w-40 sm:shrink-0">
+            Lean into
+          </dt>
           <dd className="text-[0.95rem] leading-relaxed text-text">{fortune.leanInto}</dd>
         </div>
-        <div className="flex flex-col gap-1.5 sm:pl-6">
-          <dt className="font-mono text-[0.68rem] font-medium tracking-[0.14em] text-cinnabar uppercase">
+        <div className="flex flex-col gap-1.5 py-5 sm:flex-row sm:items-baseline sm:gap-8">
+          <dt className="font-mono text-[0.68rem] font-medium tracking-[0.14em] text-cinnabar uppercase sm:w-40 sm:shrink-0">
             Go easy on
           </dt>
           <dd className="text-[0.95rem] leading-relaxed text-text">{fortune.goEasyOn}</dd>
@@ -109,7 +113,7 @@ export function DailyCard({
       </dl>
 
       <p className="font-mono text-[0.66rem] tracking-[0.1em] text-faint uppercase">
-        Cast today at {formatCastTime(castAt, tzId)}
+        Cast today at {formatCastTime(castAt, tzId)} · one card, once a day
       </p>
     </Card>
   );

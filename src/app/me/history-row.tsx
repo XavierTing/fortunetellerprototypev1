@@ -22,7 +22,7 @@ export function HistoryRow({
   return (
     <Link
       href={href}
-      className="group flex items-center justify-between gap-4 py-5 transition-colors duration-200 ease-out-expo hover:bg-raised"
+      className="group flex items-center justify-between gap-4 py-6 transition-colors duration-300 ease-out-expo hover:bg-raised"
     >
       <span className="flex min-w-0 flex-col gap-1">
         <span className="truncate font-display text-base font-medium text-ink">{title}</span>
@@ -32,7 +32,7 @@ export function HistoryRow({
         {tag ? <Tag variant="neutral">{tag}</Tag> : null}
         <span
           aria-hidden="true"
-          className="font-mono text-xs text-faint transition-colors duration-200 ease-out-expo group-hover:text-cinnabar"
+          className="font-mono text-xs text-faint transition-colors duration-300 ease-out-expo group-hover:text-cinnabar"
         >
           →
         </span>

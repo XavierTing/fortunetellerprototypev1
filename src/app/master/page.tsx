@@ -19,23 +19,28 @@ function isChatRole(role: string): role is "user" | "assistant" {
 function EmptyState() {
   return (
     <Section className="flex flex-col gap-10 py-16 sm:py-24">
-      <div className="flex flex-col gap-4">
-        <Eyebrow>師傅 · The Master</Eyebrow>
+      <div className="animate-rise-in flex flex-col gap-4">
+        <Eyebrow>
+          <span className="font-cjk">師傅</span> · The Master
+        </Eyebrow>
         <h1 className="max-w-xl font-display text-[clamp(2.25rem,5vw,3.5rem)] font-light leading-[1.05] tracking-[-0.015em] text-ink">
-          The master needs a chart to read.
+          The master keeps silence until there is a chart to read.
         </h1>
       </div>
 
-      <Card className="flex max-w-2xl flex-col items-start gap-5 p-8 sm:p-10">
+      <Card
+        className="animate-rise-in flex max-w-2xl flex-col items-start gap-5 p-8 sm:p-10"
+        style={{ animationDelay: "120ms" }}
+      >
         <span
           aria-hidden="true"
-          className="flex h-11 w-11 items-center justify-center rounded-lg border border-hairline font-display text-xl text-cinnabar"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border border-hairline font-cjk text-xl text-cinnabar"
         >
           師
         </span>
         <p className="max-w-[52ch] text-[1.02rem] leading-relaxed text-muted">
-          Reveal your chart first, then ask the master. Every answer is grounded in your actual pillars — there&apos;s
-          nothing to ground a conversation in until your chart exists. It takes under a minute.
+          Every word he offers is drawn from your own pillars — there is nothing yet to draw from. Cast your chart
+          once, free and in under a minute, and the conversation can begin.
         </p>
         <Button href="/reading/new">
           Reveal your chart <span aria-hidden="true">→</span>
@@ -77,19 +82,31 @@ export default async function MasterPage() {
     }));
 
   return (
-    <Section className="flex flex-col gap-10 py-16 sm:py-24">
-      <div className="flex flex-col gap-3">
-        <Eyebrow>師傅 · The Master</Eyebrow>
-        <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
-          Ask your 师傅.
-        </h1>
+    <Section className="flex flex-col gap-12 py-16 sm:py-24">
+      <div className="animate-rise-in flex flex-col gap-3">
+        <Eyebrow>
+          <span className="font-cjk">師傅</span> · The Master
+        </Eyebrow>
+        <div className="flex items-start justify-between gap-6">
+          <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
+            Ask your <span className="font-cjk">师傅</span>.
+          </h1>
+          <span
+            aria-hidden="true"
+            className="hidden shrink-0 font-cjk text-7xl leading-none text-ink/[0.08] sm:block"
+          >
+            師
+          </span>
+        </div>
         <p className="max-w-[62ch] text-[1.02rem] leading-relaxed text-muted">
-          {profile.name ? `${profile.name}’s` : "Your"} chart, in conversation — a{" "}
+          {profile.name ? `${profile.name}’s` : "Your"} chart, held in conversation — a{" "}
           {chart.dayMasterStrength} {ELEMENT_LABEL[chart.dayMaster.element]} Day Master, {chart.zodiac} year.
         </p>
       </div>
 
-      <ChatPanel profileId={profile.id} initialMessages={initialMessages} />
+      <div className="border-t border-hairline pt-10">
+        <ChatPanel profileId={profile.id} initialMessages={initialMessages} />
+      </div>
 
       <PaywallSlot
         label="Unlimited chat"

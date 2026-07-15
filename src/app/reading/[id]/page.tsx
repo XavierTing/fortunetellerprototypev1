@@ -53,21 +53,31 @@ export default async function ReadingPage({ params }: { params: Promise<{ id: st
   const initialCards = existingReading ? (JSON.parse(existingReading.cards) as Card[]) : undefined;
 
   return (
-    <Section className="flex flex-col gap-10 py-16 sm:py-24">
-      <div className="flex flex-wrap items-start justify-between gap-6">
-        <div className="flex flex-col gap-3">
-          <Eyebrow>八字 · Natal Reading</Eyebrow>
-          <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
-            {profile.name ? `${profile.name}’s reading` : "Your reading"}
-          </h1>
-          <p className="font-mono text-xs text-faint">Born {formatBirthLine(profile.birthTime, chart)}</p>
+    <Section className="py-16 sm:py-28">
+      {/* A hanging scroll (立軸) unrolls in one narrow column, not the
+          app's usual wide grid — see the design spec's "Reading as hanging
+          scroll" signature moment. Each block below is its own quiet
+          segment, divided by a single ink hairline with generous rhythm. */}
+      <div className="mx-auto flex max-w-3xl flex-col gap-16">
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="flex flex-col gap-3">
+            <Eyebrow>八字 · Natal Reading</Eyebrow>
+            <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
+              {profile.name ? `${profile.name}’s reading` : "Your reading"}
+            </h1>
+            <p className="font-mono text-xs text-faint">Born {formatBirthLine(profile.birthTime, chart)}</p>
+          </div>
+          <ShareButton profileId={id} />
         </div>
-        <ShareButton profileId={id} />
+
+        <div className="border-t border-hairline pt-16">
+          <ChartSummary chart={chart} />
+        </div>
+
+        <div className="border-t border-hairline pt-16">
+          <ReadingStream profileId={id} chart={chart} initialCards={initialCards} />
+        </div>
       </div>
-
-      <ChartSummary chart={chart} />
-
-      <ReadingStream profileId={id} chart={chart} initialCards={initialCards} />
     </Section>
   );
 }

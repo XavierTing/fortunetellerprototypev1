@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Button, Card, Eyebrow, Section, SectionHead } from "@/components/ui";
+import { Button, Card, Eyebrow, Seal, Section, SectionHead } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Why not just ask ChatGPT? · Cinnabar",
@@ -49,17 +49,28 @@ const COMPARISON_ROWS = [
 export default function WhyPage() {
   return (
     <>
-      <Section className="flex flex-col gap-7 py-20 sm:py-28">
-        <Eyebrow>問 · Why Cinnabar</Eyebrow>
-        <h1 className="max-w-3xl font-display text-[clamp(2.5rem,5.4vw,4.25rem)] leading-[1.06] font-light tracking-[-0.015em] text-ink">
-          Why not just ask <span className="text-cinnabar">ChatGPT</span>?
-        </h1>
-        <p className="max-w-[62ch] text-[1.08rem] leading-relaxed text-muted">
-          You can. People do, constantly — and most of the time the chart it hands back is quietly wrong. A general
-          chatbot is a language model with no calendar library, no timezone database, and no memory of what it told
-          you five minutes ago. Cinnabar splits the job in two: a small, boring, deterministic program does the
-          arithmetic, and a language model only ever explains what the arithmetic already found.
-        </p>
+      <Section className="relative flex flex-col gap-7 overflow-hidden py-20 sm:py-28">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 right-0 -z-10 select-none font-cjk leading-none text-ink/[0.05]"
+          style={{ fontSize: "clamp(10rem, 22vw, 18rem)" }}
+        >
+          問
+        </span>
+        <div className="animate-rise-in flex flex-col gap-7">
+          <Eyebrow>
+            <span className="font-cjk">問</span> · Why Cinnabar
+          </Eyebrow>
+          <h1 className="max-w-3xl font-display text-[clamp(2.5rem,5.4vw,4.25rem)] leading-[1.06] font-light tracking-[-0.015em] text-ink">
+            Why not just ask <span className="text-ink-soft">ChatGPT</span>?
+          </h1>
+          <p className="max-w-[62ch] text-[1.08rem] leading-relaxed text-muted">
+            You can. People do, constantly — and most of the time the chart it hands back is quietly wrong. A
+            general chatbot is a language model with no calendar library, no timezone database, and no memory of
+            what it told you five minutes ago. Cinnabar splits the job in two: a small, boring, deterministic
+            program does the arithmetic, and a language model only ever explains what the arithmetic already found.
+          </p>
+        </div>
       </Section>
 
       <Section className="border-t border-hairline py-20">
@@ -68,7 +79,10 @@ export default function WhyPage() {
           sub="八字 is a real calendar system with real rules — 节气 boundaries, a sexagenary cycle, hour pillars that flip on the true solar minute. That's arithmetic, not vibes."
         />
         <div className="mt-10 flex flex-col divide-y divide-hairline border-y border-hairline">
-          <div className="flex flex-col gap-2 py-7 sm:flex-row sm:items-baseline sm:gap-8">
+          <div
+            className="animate-rise-in flex flex-col gap-2 py-7 sm:flex-row sm:items-baseline sm:gap-8"
+            style={{ animationDelay: "0ms" }}
+          >
             <span className="font-mono text-[0.66rem] tracking-[0.12em] text-faint uppercase sm:w-44 sm:shrink-0">
               Lunar calendar
             </span>
@@ -77,7 +91,10 @@ export default function WhyPage() {
               seen a thousand similar ones of.
             </p>
           </div>
-          <div className="flex flex-col gap-2 py-7 sm:flex-row sm:items-baseline sm:gap-8">
+          <div
+            className="animate-rise-in flex flex-col gap-2 py-7 sm:flex-row sm:items-baseline sm:gap-8"
+            style={{ animationDelay: "70ms" }}
+          >
             <span className="font-mono text-[0.66rem] tracking-[0.12em] text-faint uppercase sm:w-44 sm:shrink-0">
               Timezone &amp; DST
             </span>
@@ -86,7 +103,10 @@ export default function WhyPage() {
               automatically, the moment you pick a city.
             </p>
           </div>
-          <div className="flex flex-col gap-2 py-7 sm:flex-row sm:items-baseline sm:gap-8">
+          <div
+            className="animate-rise-in flex flex-col gap-2 py-7 sm:flex-row sm:items-baseline sm:gap-8"
+            style={{ animationDelay: "140ms" }}
+          >
             <span className="font-mono text-[0.66rem] tracking-[0.12em] text-faint uppercase sm:w-44 sm:shrink-0">
               True solar time
             </span>
@@ -121,8 +141,12 @@ export default function WhyPage() {
       <Section className="border-t border-hairline py-20">
         <SectionHead title="Side by side" sub="The same question, asked two ways." />
         <div className="mt-10 flex flex-col divide-y divide-hairline border-y border-hairline">
-          {COMPARISON_ROWS.map((row) => (
-            <div key={row.title} className="grid gap-4 py-8 sm:grid-cols-[1fr_1.4fr_1.4fr] sm:gap-8">
+          {COMPARISON_ROWS.map((row, i) => (
+            <div
+              key={row.title}
+              className="animate-rise-in grid gap-4 py-8 sm:grid-cols-[1fr_1.4fr_1.4fr] sm:gap-8"
+              style={{ animationDelay: `${i * 60}ms` }}
+            >
               <h3 className="font-display text-lg font-medium text-ink">{row.title}</h3>
               <div className="flex flex-col gap-1.5">
                 <span className="font-mono text-[0.66rem] tracking-[0.12em] text-faint uppercase">
@@ -152,11 +176,20 @@ export default function WhyPage() {
             <Button href="/reading/new">
               Reveal your chart <span aria-hidden="true">→</span>
             </Button>
-            <Link href="/" className="text-sm font-medium text-cinnabar hover:text-cinnabar-deep">
+            <Link
+              href="/"
+              className="text-sm font-medium text-ink-soft underline decoration-hairline underline-offset-4 transition-colors duration-300 ease-out-expo hover:text-cinnabar"
+            >
               Back to Cinnabar
             </Link>
           </div>
         </Card>
+      </Section>
+
+      <Section className="flex justify-center py-16">
+        <Seal aria-hidden="true" shape="square" size="sm" className="animate-seal-stamp font-cjk">
+          朱
+        </Seal>
       </Section>
     </>
   );

@@ -24,8 +24,10 @@ function formatLongDate(dateStr: string): string {
 function RateLimitedState({ message }: { message: string }) {
   return (
     <Section className="flex flex-col gap-8 py-16 sm:py-24">
-      <div className="flex flex-col gap-4">
-        <Eyebrow>曆 · Daily Fortune</Eyebrow>
+      <div className="animate-rise-in flex flex-col gap-4">
+        <Eyebrow>
+          <span className="font-cjk">曆</span> · Daily Fortune
+        </Eyebrow>
         <h1 className="max-w-xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
           One moment.
         </h1>
@@ -71,10 +73,12 @@ export default async function TodayPage() {
   }
 
   return (
-    <Section className="flex flex-col gap-10 py-16 sm:py-24">
-      <div className="flex flex-wrap items-start justify-between gap-6">
+    <Section className="flex flex-col gap-12 py-16 sm:py-24">
+      <div className="animate-rise-in flex flex-wrap items-start justify-between gap-6">
         <div className="flex flex-col gap-3">
-          <Eyebrow>曆 · Daily Fortune</Eyebrow>
+          <Eyebrow>
+            <span className="font-cjk">曆</span> · Daily Fortune
+          </Eyebrow>
           <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
             Today
           </h1>

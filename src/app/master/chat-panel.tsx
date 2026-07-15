@@ -85,7 +85,7 @@ export function ChatPanel({
         // the outer catch below (see src/lib/rate-limit.ts).
         if (res.status === 429) {
           const body = (await res.json().catch(() => null)) as { message?: string } | null;
-          throw new Error(body?.message ?? "You're asking a lot of questions at once — give it a moment and try again.");
+          throw new Error(body?.message ?? "The 师傅 needs a moment — you're asking rather quickly. Try again shortly.");
         }
         throw new Error(`request failed: ${res.status}`);
       }
@@ -119,7 +119,7 @@ export function ChatPanel({
             const { message } = JSON.parse(parsed.data) as { message?: string };
             settled = true;
             settleAssistant();
-            setErrorMessage(message ?? "The 师傅 hit a snag replying. Please try again.");
+            setErrorMessage(message ?? "The 师傅 stumbled over that one. Please try again.");
             setStatus("error");
           }
         }
@@ -131,7 +131,7 @@ export function ChatPanel({
       }
     } catch (err) {
       settleAssistant();
-      setErrorMessage(err instanceof Error ? err.message : "Lost connection while the 师傅 was replying. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : "The thread went quiet while the 师傅 was replying. Please try again.");
       setStatus("error");
     }
   }
@@ -142,11 +142,11 @@ export function ChatPanel({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {messages.length === 0 ? (
         <EmptyChatIntro prompts={SUGGESTED_PROMPTS} onPick={(p) => void sendMessage(p)} disabled={status === "streaming"} />
       ) : (
-        <div role="log" aria-live="polite" aria-atomic="false" className="flex flex-col gap-4">
+        <div role="log" aria-live="polite" aria-atomic="false" className="flex flex-col gap-5">
           {messages.map((m) =>
             m.role === "user" ? (
               <UserBubble key={m.id} content={m.content} />
@@ -164,7 +164,7 @@ export function ChatPanel({
         </p>
       )}
 
-      <form onSubmit={onSubmit} className="flex items-end gap-3">
+      <form onSubmit={onSubmit} className="flex items-end gap-3 border-t border-hairline pt-6">
         <Field label="Ask the master" htmlFor="master-chat-input" className="flex-1">
           <Input
             id="master-chat-input"

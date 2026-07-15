@@ -82,8 +82,12 @@
 
   /* ---- Type (theme-independent — next/font vars set on <html>) ------- */
   --font-display: var(--font-cormorant), "Iowan Old Style", Georgia, serif;
+  /* CJK glyphs appearing inline in body prose fall through the Latin faces
+     (none carry CJK) to Noto Serif SC, so Chinese always reads as our ink
+     serif rather than a random system substitute. */
   --font-body: var(--font-hanken), -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+    Helvetica, Arial, var(--font-notoserifsc), "Songti SC", "STSong",
+    sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
   /* Chinese glyph anchors (八字, 命, 五行, 干支, 木火土金水) — real semantic

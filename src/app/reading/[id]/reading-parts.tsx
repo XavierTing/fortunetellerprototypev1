@@ -1,9 +1,12 @@
 /**
- * Presentational pieces for the streamed reading list. Deliberately NOT a
- * repeated `Card` grid (DESIGN.md's named anti-pattern) — an editorial,
- * hairline-divided list instead, the same pattern the homepage's "What
- * Cinnabar reads" section uses. `<details>` gives the "mechanics ⓘ"
- * expander real keyboard/AT support for free, no custom ARIA needed.
+ * Presentational pieces for the streamed reading list — the hanging-scroll
+ * (立軸) stanzas (R1 "signature moment" #3). Deliberately NOT a repeated
+ * `Card` grid (DESIGN.md's named anti-pattern) — an editorial, hairline-
+ * divided list instead, the same pattern the homepage's "What Cinnabar
+ * reads" section uses, now given generous vertical rhythm so each card
+ * reads as its own quiet stanza rather than a dense feed. `<details>` gives
+ * the "mechanics ⓘ" expander real keyboard/AT support for free, no custom
+ * ARIA needed.
  */
 import { Tag, cn } from "@/components/ui";
 import type { Card } from "@/lib/interpreter/types";
@@ -12,7 +15,7 @@ export function MechanicsExpander({ mechanics }: { mechanics?: string }) {
   if (!mechanics) return null;
   return (
     <details className="group mt-1">
-      <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-[0.68rem] font-medium tracking-[0.14em] text-faint uppercase transition-colors duration-200 ease-out-expo hover:text-gold [&::-webkit-details-marker]:hidden">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-[0.68rem] font-medium tracking-[0.14em] text-faint uppercase transition-colors duration-200 ease-out-expo hover:text-cinnabar [&::-webkit-details-marker]:hidden">
         <span
           aria-hidden="true"
           className="inline-block transition-transform duration-200 ease-out-expo group-open:rotate-90"
@@ -21,7 +24,7 @@ export function MechanicsExpander({ mechanics }: { mechanics?: string }) {
         </span>
         the mechanics <span aria-hidden="true">ⓘ</span>
       </summary>
-      <p className="mt-2 max-w-[60ch] border-l border-hairline-gold pl-4 text-[0.92rem] leading-relaxed text-muted">
+      <p className="mt-2 max-w-[60ch] border-l border-hairline pl-4 text-[0.92rem] leading-relaxed text-muted">
         {mechanics}
       </p>
     </details>
@@ -30,7 +33,7 @@ export function MechanicsExpander({ mechanics }: { mechanics?: string }) {
 
 export function ReadingRow({ card, emphasize }: { card: Card; emphasize?: boolean }) {
   return (
-    <article className="animate-rise-in flex flex-col gap-2.5 py-8">
+    <article className="animate-rise-in flex flex-col gap-3 py-10 sm:py-12">
       {emphasize && (
         <Tag variant="gold" className="mb-1 self-start">
           Where to go from here
@@ -53,11 +56,11 @@ export function ReadingRow({ card, emphasize }: { card: Card; emphasize?: boolea
 export function HeroSkeleton() {
   return (
     <div className="flex animate-pulse flex-col gap-3" aria-hidden="true">
-      <div className="h-3 w-40 rounded bg-graphite" />
-      <div className="h-9 w-3/4 rounded bg-graphite" />
-      <div className="h-9 w-1/2 rounded bg-graphite" />
-      <div className="mt-2 h-4 w-full max-w-xl rounded bg-graphite" />
-      <div className="h-4 w-5/6 max-w-xl rounded bg-graphite" />
+      <div className="h-3 w-40 rounded bg-paper-sink" />
+      <div className="h-9 w-3/4 rounded bg-paper-sink" />
+      <div className="h-9 w-1/2 rounded bg-paper-sink" />
+      <div className="mt-2 h-4 w-full max-w-xl rounded bg-paper-sink" />
+      <div className="h-4 w-5/6 max-w-xl rounded bg-paper-sink" />
     </div>
   );
 }
@@ -66,7 +69,7 @@ export function TextSkeleton({ lines = 2 }: { lines?: number }) {
   return (
     <div className="flex animate-pulse flex-col gap-2" aria-hidden="true">
       {Array.from({ length: lines }).map((_, i) => (
-        <div key={i} className={cn("h-4 rounded bg-graphite", i === lines - 1 ? "w-2/3" : "w-full max-w-xl")} />
+        <div key={i} className={cn("h-4 rounded bg-paper-sink", i === lines - 1 ? "w-2/3" : "w-full max-w-xl")} />
       ))}
     </div>
   );
@@ -74,11 +77,11 @@ export function TextSkeleton({ lines = 2 }: { lines?: number }) {
 
 export function RowSkeleton({ title }: { title: string }) {
   return (
-    <div className="flex animate-pulse flex-col gap-2.5 py-8" aria-hidden="true">
+    <div className="flex animate-pulse flex-col gap-2.5 py-10 sm:py-12" aria-hidden="true">
       <p className="font-mono text-[0.64rem] tracking-[0.14em] text-faint uppercase">{title}</p>
-      <div className="h-3 w-2/5 rounded bg-graphite" />
-      <div className="h-3 w-full max-w-xl rounded bg-graphite" />
-      <div className="h-3 w-4/6 max-w-xl rounded bg-graphite" />
+      <div className="h-3 w-2/5 rounded bg-paper-sink" />
+      <div className="h-3 w-full max-w-xl rounded bg-paper-sink" />
+      <div className="h-3 w-4/6 max-w-xl rounded bg-paper-sink" />
     </div>
   );
 }

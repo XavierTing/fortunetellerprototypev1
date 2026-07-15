@@ -9,12 +9,14 @@
  * ~8-10 card generation.
  *
  * Layout deliberately isn't a uniform card grid (DESIGN.md's named
- * anti-pattern): the first card ("chart-at-a-glance") is the instant free
- * insight, rendered as a hero pull-quote; "element-balance" merges into
- * the chart visualization above it instead of repeating as prose; the
- * rest render as an editorial, hairline-divided list; "lean-into" (the
- * agency close every reading must end on, per PRD §5.2) gets a small
- * emphasis marker.
+ * anti-pattern) — it's the reading's hanging-scroll (立軸) unrolling (R1
+ * "signature moment" #3): the first card ("chart-at-a-glance") is the
+ * instant free insight, rendered as a large Cormorant pull-quote (the
+ * scroll's opening line); "element-balance" merges into the enso
+ * visualization above it instead of repeating as prose; the rest render as
+ * an editorial list of quiet stanzas, each separated by a single ink
+ * hairline with generous vertical rhythm; "lean-into" (the agency close
+ * every reading must end on, per PRD §5.2) gets a small emphasis marker.
  */
 import { useEffect, useRef, useState } from "react";
 import { PaywallSlot } from "@/components/ui";
@@ -101,14 +103,14 @@ export function ReadingStream({
   const stillWaiting = status === "connecting" || status === "streaming";
 
   return (
-    <div className="flex flex-col gap-14">
+    <div className="flex flex-col gap-20">
       <section aria-label="Your reading, at a glance">
         {heroCard ? (
-          <div className="animate-rise-in flex flex-col gap-3">
+          <div className="animate-rise-in flex flex-col gap-5">
             <p className="font-mono text-[0.68rem] tracking-[0.16em] text-faint uppercase">
               Free · no signup needed
             </p>
-            <h2 className="max-w-3xl font-display text-[clamp(1.75rem,3.6vw,2.75rem)] leading-[1.15] font-light text-ink">
+            <h2 className="max-w-3xl font-display text-[clamp(2rem,4.2vw,3.25rem)] leading-[1.14] font-light text-ink">
               {heroCard.headline}
             </h2>
             <p className="max-w-[62ch] text-[1.05rem] leading-relaxed text-muted">{heroCard.body}</p>
@@ -121,7 +123,7 @@ export function ReadingStream({
         )}
       </section>
 
-      <section className="flex flex-col gap-6 border-t border-hairline pt-10">
+      <section className="flex flex-col gap-7 border-t border-hairline pt-14">
         <h3 className="font-display text-xl font-medium text-ink">Element Balance</h3>
         <ElementBalanceChart chart={chart} />
         {elementCard ? (

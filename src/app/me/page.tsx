@@ -76,18 +76,28 @@ export default async function MePage() {
 
   return (
     <Section className="flex flex-col gap-14 py-16 sm:py-24">
-      <div className="flex flex-col gap-3">
-        <Eyebrow>我 · Me</Eyebrow>
-        <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
-          {profile.name ? profile.name : "Your profile"}
-        </h1>
+      <div className="animate-rise-in flex flex-col gap-3">
+        <Eyebrow>
+          <span className="font-cjk">我</span> · Me
+        </Eyebrow>
+        <div className="flex items-start justify-between gap-6">
+          <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
+            {profile.name ? profile.name : "Your profile"}
+          </h1>
+          <span
+            aria-hidden="true"
+            className="hidden shrink-0 font-cjk text-7xl leading-none text-ink/[0.08] sm:block"
+          >
+            我
+          </span>
+        </div>
         <p className="font-mono text-xs text-faint">Born {formatBirthLine(profile.birthTime, chart)}</p>
       </div>
 
       {/* Compact chart summary — reuses the reading page's own element-balance
           visualization rather than re-implementing a second five-element
           chart for this view. */}
-      <div className="flex flex-col gap-6 border-y border-hairline py-8">
+      <div className="flex flex-col gap-6 border-y border-hairline py-10">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <p className="max-w-[52ch] text-[0.98rem] leading-relaxed text-text">
             {capitalize(chart.dayMasterStrength)} {ELEMENT_LABEL[chart.dayMaster.element]} Day Master · Year of the{" "}
@@ -134,7 +144,7 @@ export default async function MePage() {
             ))}
           </div>
         ) : (
-          <EmptyRow>No readings yet — your first one takes under a minute.</EmptyRow>
+          <EmptyRow>Nothing recorded yet — your first reading takes under a minute.</EmptyRow>
         )}
       </div>
 
@@ -159,7 +169,7 @@ export default async function MePage() {
             ))}
           </div>
         ) : (
-          <EmptyRow>No conversations yet — ask the master anything about your chart.</EmptyRow>
+          <EmptyRow>No conversations yet — the 师傅 is only ever a question away.</EmptyRow>
         )}
       </div>
 
@@ -188,7 +198,7 @@ export default async function MePage() {
             })}
           </div>
         ) : (
-          <EmptyRow>No compatibility checks yet — see how your chart meets someone else&apos;s.</EmptyRow>
+          <EmptyRow>No compatibility checks yet — see how your chart sits beside someone else&apos;s.</EmptyRow>
         )}
       </div>
 

@@ -12,10 +12,10 @@ import { Button } from "@/components/ui";
 
 export function AssistantBubble({ content, pending }: { content: string; pending?: boolean }) {
   return (
-    <div className="flex items-start gap-3">
+    <div className="animate-rise-in flex items-start gap-3">
       <span
         aria-hidden="true"
-        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-hairline font-display text-base text-cinnabar"
+        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-hairline font-cjk text-base text-cinnabar"
       >
         師
       </span>
@@ -23,7 +23,7 @@ export function AssistantBubble({ content, pending }: { content: string; pending
         {content ? (
           <p className="whitespace-pre-wrap text-[0.95rem] leading-relaxed text-text">{content}</p>
         ) : (
-          <span className="sr-only">The 师傅 is replying…</span>
+          <span className="sr-only">The 师傅 is considering…</span>
         )}
         {pending && (
           <span aria-hidden="true" className="mt-2 inline-flex gap-1">
@@ -39,7 +39,7 @@ export function AssistantBubble({ content, pending }: { content: string; pending
 
 export function UserBubble({ content }: { content: string }) {
   return (
-    <div className="flex justify-end">
+    <div className="animate-rise-in flex justify-end">
       <div className="max-w-[85%] rounded-xl border border-hairline bg-graphite px-4 py-3 sm:max-w-[70%] sm:px-5 sm:py-4">
         <p className="whitespace-pre-wrap text-[0.95rem] leading-relaxed text-ink">{content}</p>
       </div>
@@ -57,10 +57,10 @@ export function EmptyChatIntro({
   disabled?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-5 border-y border-hairline py-10">
+    <div className="animate-rise-in flex flex-col gap-5 border-y border-hairline py-10">
       <p className="max-w-[56ch] text-[1.02rem] leading-relaxed text-muted">
-        Ask anything about your chart — your Day Master, your favorable elements, timing, relationships. The 师傅
-        answers from your actual pillars, not a generic horoscope.
+        Ask anything — your Day Master, your favorable elements, timing, the shape of a relationship. The 师傅
+        answers only from your own pillars, never a generic horoscope.
       </p>
       <div className="flex flex-wrap gap-2.5">
         {prompts.map((p) => (
