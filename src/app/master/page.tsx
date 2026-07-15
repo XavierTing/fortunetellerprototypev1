@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Button, Card, Eyebrow, Section } from "@/components/ui";
+import { Button, Card, Eyebrow, PaywallSlot, Section } from "@/components/ui";
 import { db } from "@/lib/db";
 import { ELEMENT_LABEL } from "@/lib/interpreter/five-elements";
 import type { Chart } from "@/lib/interpreter/types";
@@ -90,6 +90,11 @@ export default async function MasterPage() {
       </div>
 
       <ChatPanel profileId={profile.id} initialMessages={initialMessages} />
+
+      <PaywallSlot
+        label="Unlimited chat"
+        note="A free tier usually caps replies per day — every message here is unlocked in this prototype."
+      />
     </Section>
   );
 }

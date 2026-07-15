@@ -6,6 +6,7 @@ import type { Card, Chart } from "@/lib/interpreter/types";
 import { getSessionUserId } from "@/lib/session";
 import { ChartSummary } from "./chart-summary";
 import { ReadingStream } from "./reading-stream";
+import { ShareButton } from "./share-button";
 
 export const metadata: Metadata = { title: "Your Reading · Cinnabar" };
 
@@ -41,12 +42,15 @@ export default async function ReadingPage({ params }: { params: Promise<{ id: st
 
   return (
     <Section className="flex flex-col gap-10 py-16 sm:py-24">
-      <div className="flex flex-col gap-3">
-        <Eyebrow>八字 · Natal Reading</Eyebrow>
-        <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
-          {profile.name ? `${profile.name}’s reading` : "Your reading"}
-        </h1>
-        <p className="font-mono text-xs text-faint">Born {formatBirthLine(profile.birthTime, chart)}</p>
+      <div className="flex flex-wrap items-start justify-between gap-6">
+        <div className="flex flex-col gap-3">
+          <Eyebrow>八字 · Natal Reading</Eyebrow>
+          <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
+            {profile.name ? `${profile.name}’s reading` : "Your reading"}
+          </h1>
+          <p className="font-mono text-xs text-faint">Born {formatBirthLine(profile.birthTime, chart)}</p>
+        </div>
+        <ShareButton profileId={id} />
       </div>
 
       <ChartSummary chart={chart} />

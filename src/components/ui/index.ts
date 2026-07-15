@@ -17,5 +17,7 @@ export { Section, SectionHead } from "./section";
 
 export { Field, Input } from "./field";
 
+export { PaywallSlot } from "./paywall-slot";
+
 export { cn } from "./cn";
 export type { ClassValue } from "./cn";

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { DateTime } from "luxon";
-import { Eyebrow, Section } from "@/components/ui";
+import { Eyebrow, PaywallSlot, Section } from "@/components/ui";
 import { db } from "@/lib/db";
 import type { Chart } from "@/lib/interpreter/types";
 import { getSessionUserId } from "@/lib/session";
 import { DailyCard } from "./daily-card";
 import { TodayEmptyState } from "./empty-state";
 import { loadDailyFortune } from "./lib";
+import { ShareButton } from "./share-button";
 
 export const metadata: Metadata = {
   title: "Today · Cinnabar",
@@ -40,15 +41,18 @@ export default async function TodayPage() {
 
   return (
     <Section className="flex flex-col gap-10 py-16 sm:py-24">
-      <div className="flex flex-col gap-3">
-        <Eyebrow>曆 · Daily Fortune</Eyebrow>
-        <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
-          Today
-        </h1>
-        <p className="font-mono text-xs text-faint">
-          {formatLongDate(result.today.date)} · {profile.name ? `Cast for ${profile.name}` : "Cast for you"} ·{" "}
-          {chart.dayMaster.stemPinyin} {chart.dayMaster.stem} Day Master
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-6">
+        <div className="flex flex-col gap-3">
+          <Eyebrow>曆 · Daily Fortune</Eyebrow>
+          <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
+            Today
+          </h1>
+          <p className="font-mono text-xs text-faint">
+            {formatLongDate(result.today.date)} · {profile.name ? `Cast for ${profile.name}` : "Cast for you"} ·{" "}
+            {chart.dayMaster.stemPinyin} {chart.dayMaster.stem} Day Master
+          </p>
+        </div>
+        <ShareButton profileId={profile.id} />
       </div>
 
       <DailyCard
@@ -58,6 +62,11 @@ export default async function TodayPage() {
         interaction={result.interaction}
         castAt={result.castAt}
         tzId={profile.tzId}
+      />
+
+      <PaywallSlot
+        label="Deep annual outlook"
+        note="Today's one-a-day card stays free forever. A longer-range 流年 forecast would live behind this marker."
       />
     </Section>
   );

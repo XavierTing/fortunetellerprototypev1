@@ -54,10 +54,11 @@ export function PersonBForm() {
       return;
     }
     const trimmed = query.trim();
-    if (trimmed.length < 2) {
-      setResults([]);
-      return;
-    }
+    // A too-short query schedules no fetch; results were already cleared
+    // synchronously in the onChange handler below (setState belongs in the
+    // event handler that originated the change, not the effect that reacts
+    // to it — react-hooks/set-state-in-effect).
+    if (trimmed.length < 2) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       fetch(`/api/geocode/search?q=${encodeURIComponent(trimmed)}`)
@@ -165,8 +166,13 @@ export function PersonBForm() {
             placeholder="Start typing a city…"
             value={query}
             onChange={(e) => {
-              setQuery(e.target.value);
+              const value = e.target.value;
+              setQuery(value);
               setSelectedCity(null);
+              if (value.trim().length < 2) {
+                setResults([]);
+                setOpen(false);
+              }
             }}
             onKeyDown={onCityKeyDown}
             onFocus={() => results.length > 0 && setOpen(true)}

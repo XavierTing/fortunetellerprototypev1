@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
+import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { SiteHeader } from "@/components/site-header";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
@@ -59,9 +60,22 @@ export default function RootLayout({
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
         />
+        {/* Skip-to-content: the very first focusable element, invisible
+            until it receives keyboard focus (Tailwind's sr-only /
+            focus:not-sr-only pair) — lets a keyboard/screen-reader user
+            bypass the header + nav rail on every page. */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-gold focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-lacquer-deep"
+        >
+          Skip to content
+        </a>
         <SiteHeader />
         <Nav />
-        <main className="flex-1 pb-24 md:pb-0 md:pl-20">{children}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 pb-24 md:pb-0 md:pl-20 focus:outline-none">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

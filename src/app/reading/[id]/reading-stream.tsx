@@ -17,6 +17,7 @@
  * emphasis marker.
  */
 import { useEffect, useRef, useState } from "react";
+import { PaywallSlot } from "@/components/ui";
 import { CARD_SPECS } from "@/lib/interpreter/card-specs";
 import type { Card, Chart } from "@/lib/interpreter/types";
 import { ElementBalanceChart } from "./element-balance";
@@ -144,6 +145,18 @@ export function ReadingStream({
         <p role="alert" className="text-sm text-cinnabar">
           {errorMessage}
         </p>
+      )}
+
+      {status === "done" && cards.length > 0 && (
+        <PaywallSlot
+          label="Full natal book"
+          note="Free tier: this reading, in full. Unlocked here — a future paywall boundary, not enforced."
+        >
+          <p className="max-w-[60ch] text-sm leading-relaxed text-muted">
+            The complete natal book — a year-by-year 大运 walkthrough and a downloadable keepsake — would sit behind
+            this line in production. This prototype ships it wide open.
+          </p>
+        </PaywallSlot>
       )}
     </div>
   );
