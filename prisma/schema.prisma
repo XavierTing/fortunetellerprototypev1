@@ -1,9 +1,11 @@
 // Cinnabar — Prisma schema
 // See PRD.md §10 (Data Model) for the source of truth.
 //
-// SQLite (local prototype) has no native JSON type, so JSON-shaped fields
-// (chartCache, cards, content, personB, result) are stored as TEXT and
-// serialized/deserialized with JSON.stringify / JSON.parse at the call site.
+// Postgres (Supabase in production). JSON-shaped fields (chartCache, cards,
+// content, personB, result) are stored as TEXT and (de)serialized with
+// JSON.stringify / JSON.parse at the call site — kept as String from the
+// original SQLite design so no app code changed on the DB switch. (They could
+// later become native `Json` columns if a query ever needs to index into them.)
 
 generator client {
   provider = "prisma-client"
@@ -11,7 +13,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 /// A person using the app. Anonymous sessions get a User row with no email

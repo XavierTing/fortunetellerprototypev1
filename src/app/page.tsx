@@ -49,27 +49,27 @@ export default function HomePage() {
             className="animate-rise-in max-w-2xl font-display text-[clamp(2.5rem,5.6vw,4.5rem)] font-light tracking-[-0.015em] text-ink"
             style={{ animationDelay: "80ms", lineHeight: 1.15 }}
           >
-            Your fate is already written.
+            Millions share your horoscope.
             <br />
-            We only read it aloud.
+            No one shares your chart.
           </h1>
 
           <p
             className="animate-rise-in max-w-[34rem] font-display text-[1.4rem] text-muted"
             style={{ animationDelay: "160ms" }}
           >
-            Chinese astrology, in plain English.
+            Real Chinese astrology, calculated from your exact birth
+            minute — in plain English.
           </p>
 
           <p
             className="animate-rise-in max-w-[34rem] text-[1.02rem] leading-[1.8] text-muted"
             style={{ animationDelay: "230ms" }}
           >
-            Every reading starts with your exact birth date, time, and
-            place — corrected to the real position of the sun where you were
-            born, not a one-size-fits-all horoscope. Your chart is
-            calculated properly, then read the way a calm, honest teacher
-            would: no jargon, no doom, no crystal balls.
+            Your birth time is corrected to the true position of the sun
+            where you were born, and your chart is read the way a calm,
+            honest teacher would read it: no jargon, no doom, no crystal
+            balls.
           </p>
 
           <div

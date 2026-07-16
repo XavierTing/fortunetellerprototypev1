@@ -13,13 +13,13 @@
     "art:placeholders": "node scripts/generate-placeholders.mjs"
   },
   "dependencies": {
-    "@libsql/client": "^0.17.4",
-    "@prisma/adapter-libsql": "^7.8.0",
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "ai": "^7.0.28",
     "lunar-typescript": "^1.8.6",
     "luxon": "^3.7.2",
     "next": "16.2.10",
+    "pg": "^8.22.0",
     "prisma": "^7.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -30,6 +30,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/luxon": "^3.7.2",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.3",
