@@ -1,0 +1,190 @@
+{
+  "notes": "Illustration generation manifest for Cinnabar (朱墨 Cinnabar & Ink). Consumed by scripts/generate-illustrations.mjs (real OpenAI images/generations calls) and scripts/generate-placeholders.mjs (procedural pngjs placeholders). Every outputPath here is part of the shared asset-path contract with the app-wiring agent -- do not rename ids or move paths without updating both this file's consumers and src/.",
+  "style": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject:",
+  "assets": [
+    {
+      "id": "hero",
+      "subject": "an atmospheric mountain-and-mist ink landscape at dawn, layered peaks dissolving into fog, a faint constellation of stars threaded through the upper sky, spacious and reverent, a single distant red seal stamped low in a corner",
+      "outputPath": "public/illustrations/hero.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: an atmospheric mountain-and-mist ink landscape at dawn, layered peaks dissolving into fog, a faint constellation of stars threaded through the upper sky, spacious and reverent, a single distant red seal stamped low in a corner"
+    },
+    {
+      "id": "element-wood",
+      "subject": "a single brushed emblem evoking the WOOD element -- bamboo stalks and new growth curling upward, rising ch'i, a whisper of jade-green wash along the leaf edges",
+      "outputPath": "public/elements/wood.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a single brushed emblem evoking the WOOD element -- bamboo stalks and new growth curling upward, rising ch'i, a whisper of jade-green wash along the leaf edges"
+    },
+    {
+      "id": "element-fire",
+      "subject": "a single brushed emblem evoking the FIRE element -- a rising flame curling like calligraphy, sudden yang energy, the cinnabar-red accent concentrated at its core",
+      "outputPath": "public/elements/fire.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a single brushed emblem evoking the FIRE element -- a rising flame curling like calligraphy, sudden yang energy, the cinnabar-red accent concentrated at its core"
+    },
+    {
+      "id": "element-earth",
+      "subject": "a single brushed emblem evoking the EARTH element -- a weathered mountain terrace or clay vessel, settled and nourishing, broad flat ink strokes with a warm ochre undertone",
+      "outputPath": "public/elements/earth.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a single brushed emblem evoking the EARTH element -- a weathered mountain terrace or clay vessel, settled and nourishing, broad flat ink strokes with a warm ochre undertone"
+    },
+    {
+      "id": "element-metal",
+      "subject": "a single brushed emblem evoking the METAL element -- a folded ceremonial blade or temple bell, clear resonant edges, cool grey-silver ink with a hairline of cinnabar at the rim",
+      "outputPath": "public/elements/metal.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a single brushed emblem evoking the METAL element -- a folded ceremonial blade or temple bell, clear resonant edges, cool grey-silver ink with a hairline of cinnabar at the rim"
+    },
+    {
+      "id": "element-water",
+      "subject": "a single brushed emblem evoking the WATER element -- a curling wave or still deep pool, yielding and profound, indigo wash pooling at the center in concentric ripples",
+      "outputPath": "public/elements/water.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a single brushed emblem evoking the WATER element -- a curling wave or still deep pool, yielding and profound, indigo wash pooling at the center in concentric ripples"
+    },
+    {
+      "id": "zodiac-rat",
+      "subject": "a lone rat rendered in expressive ink brushstrokes, auspicious and mystical, fine whiskers like calligraphy lines, perched atop a stack of ancient scrolls",
+      "outputPath": "public/zodiac/rat.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone rat rendered in expressive ink brushstrokes, auspicious and mystical, fine whiskers like calligraphy lines, perched atop a stack of ancient scrolls"
+    },
+    {
+      "id": "zodiac-ox",
+      "subject": "a lone ox rendered in expressive ink brushstrokes, auspicious and mystical, patient strength in a lowered horned head, mist curling around sturdy hooves",
+      "outputPath": "public/zodiac/ox.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone ox rendered in expressive ink brushstrokes, auspicious and mystical, patient strength in a lowered horned head, mist curling around sturdy hooves"
+    },
+    {
+      "id": "zodiac-tiger",
+      "subject": "a lone tiger rendered in expressive ink brushstrokes, auspicious and mystical, prowling low with bold striped fur, a coiled cinnabar ribbon at its collar",
+      "outputPath": "public/zodiac/tiger.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone tiger rendered in expressive ink brushstrokes, auspicious and mystical, prowling low with bold striped fur, a coiled cinnabar ribbon at its collar"
+    },
+    {
+      "id": "zodiac-rabbit",
+      "subject": "a lone rabbit rendered in expressive ink brushstrokes, auspicious and mystical, alert ears silhouetted beneath a pale crescent moon",
+      "outputPath": "public/zodiac/rabbit.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone rabbit rendered in expressive ink brushstrokes, auspicious and mystical, alert ears silhouetted beneath a pale crescent moon"
+    },
+    {
+      "id": "zodiac-dragon",
+      "subject": "a lone dragon rendered in expressive ink brushstrokes, auspicious and mystical, coiling sinuously through cloud and mist, a single pearl held beneath its chin",
+      "outputPath": "public/zodiac/dragon.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone dragon rendered in expressive ink brushstrokes, auspicious and mystical, coiling sinuously through cloud and mist, a single pearl held beneath its chin"
+    },
+    {
+      "id": "zodiac-snake",
+      "subject": "a lone snake rendered in expressive ink brushstrokes, auspicious and mystical, a sinuous coil resting beneath falling plum blossoms",
+      "outputPath": "public/zodiac/snake.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone snake rendered in expressive ink brushstrokes, auspicious and mystical, a sinuous coil resting beneath falling plum blossoms"
+    },
+    {
+      "id": "zodiac-horse",
+      "subject": "a lone horse rendered in expressive ink brushstrokes, auspicious and mystical, a galloping mane caught mid-wind, hooves barely brushing the ground",
+      "outputPath": "public/zodiac/horse.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone horse rendered in expressive ink brushstrokes, auspicious and mystical, a galloping mane caught mid-wind, hooves barely brushing the ground"
+    },
+    {
+      "id": "zodiac-goat",
+      "subject": "a lone goat rendered in expressive ink brushstrokes, auspicious and mystical, curved horns and a gentle upturned gaze, standing on a mist-wreathed outcrop",
+      "outputPath": "public/zodiac/goat.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone goat rendered in expressive ink brushstrokes, auspicious and mystical, curved horns and a gentle upturned gaze, standing on a mist-wreathed outcrop"
+    },
+    {
+      "id": "zodiac-monkey",
+      "subject": "a lone monkey rendered in expressive ink brushstrokes, auspicious and mystical, perched nimbly on a gnarled pine branch, reaching toward a distant moon",
+      "outputPath": "public/zodiac/monkey.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone monkey rendered in expressive ink brushstrokes, auspicious and mystical, perched nimbly on a gnarled pine branch, reaching toward a distant moon"
+    },
+    {
+      "id": "zodiac-rooster",
+      "subject": "a lone rooster rendered in expressive ink brushstrokes, auspicious and mystical, a proud crest and tail feathers greeting the dawn",
+      "outputPath": "public/zodiac/rooster.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone rooster rendered in expressive ink brushstrokes, auspicious and mystical, a proud crest and tail feathers greeting the dawn"
+    },
+    {
+      "id": "zodiac-dog",
+      "subject": "a lone dog rendered in expressive ink brushstrokes, auspicious and mystical, a loyal watchful seated stance, ears attentive beneath a paper lantern glow",
+      "outputPath": "public/zodiac/dog.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone dog rendered in expressive ink brushstrokes, auspicious and mystical, a loyal watchful seated stance, ears attentive beneath a paper lantern glow"
+    },
+    {
+      "id": "zodiac-pig",
+      "subject": "a lone pig rendered in expressive ink brushstrokes, auspicious and mystical, round and content beneath drifting cherry blossoms",
+      "outputPath": "public/zodiac/pig.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a lone pig rendered in expressive ink brushstrokes, auspicious and mystical, round and content beneath drifting cherry blossoms"
+    },
+    {
+      "id": "empty-master",
+      "subject": "an empty scholar's writing table with a resting ink brush laid across an inkstone, a blank unrolled scroll awaiting a reading, quiet and unhurried",
+      "outputPath": "public/illustrations/empty-master.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: an empty scholar's writing table with a resting ink brush laid across an inkstone, a blank unrolled scroll awaiting a reading, quiet and unhurried"
+    },
+    {
+      "id": "empty-today",
+      "subject": "a single incense-stick clock with a thin curl of rising smoke, marking a day not yet divined, soft shadow of an empty calendar behind it",
+      "outputPath": "public/illustrations/empty-today.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a single incense-stick clock with a thin curl of rising smoke, marking a day not yet divined, soft shadow of an empty calendar behind it"
+    },
+    {
+      "id": "empty-me",
+      "subject": "an empty bronze mirror stand draped in silk, its reflective face blank and unrevealed, a moment of quiet self-reflection awaiting a portrait",
+      "outputPath": "public/illustrations/empty-me.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: an empty bronze mirror stand draped in silk, its reflective face blank and unrevealed, a moment of quiet self-reflection awaiting a portrait"
+    },
+    {
+      "id": "empty-match",
+      "subject": "two empty facing cushions across a low tea table, a single unlit paper lantern resting between them, awaiting a pairing not yet drawn",
+      "outputPath": "public/illustrations/empty-match.png",
+      "size": "1024x1024",
+      "background": "transparent",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: two empty facing cushions across a low tea table, a single unlit paper lantern resting between them, awaiting a pairing not yet drawn"
+    },
+    {
+      "id": "share-motif",
+      "subject": "a wide ceremonial banner of drifting plum blossoms and a single soaring crane over calm water, a small red seal stamped in the lower corner, composed for sharing",
+      "outputPath": "public/illustrations/share-motif.png",
+      "size": "1536x1024",
+      "background": "opaque",
+      "prompt": "Traditional Chinese ink-wash (sumi-e) painting meeting modern mystical illustration. Predominantly sumi black ink with a single cinnabar-red (#B0392A) accent and soft restrained washes of jade-green and indigo, on warm rice-paper. Atmospheric, elegant, hand-brushed, generous negative space, a hint of gold-leaf fleck. No text, no lettering, no border, no framing. Centered subject. Subject: a wide ceremonial banner of drifting plum blossoms and a single soaring crane over calm water, a small red seal stamped in the lower corner, composed for sharing"
+    }
+  ]
+}

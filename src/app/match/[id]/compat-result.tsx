@@ -11,9 +11,16 @@
  * score is, reusing the kit's existing three-accent vocabulary rather than
  * inventing a fourth color (DESIGN.md §2 explicitly calls out jade as
  * reserved for "a harmonious compatibility result").
+ *
+ * Each person's chip also carries their zodiac year (`Chart.zodiac`) beside
+ * the existing Day Master tag, with a small brush emblem of the animal —
+ * `chart-summary.tsx`/`daily-card.tsx`'s same small-zodiac-image pattern,
+ * here on the one screen that puts two charts side by side.
  */
+import Image from "next/image";
 import { Tag, cn } from "@/components/ui";
 import type { AccentVariant } from "@/components/ui";
+import { zodiacImageSrc } from "@/lib/illustrations";
 import { ELEMENT_LABEL } from "@/lib/interpreter/five-elements";
 import type { Chart, Compat } from "@/lib/interpreter/types";
 import { ShareButton } from "./share-button";
@@ -30,6 +37,15 @@ const BAR_FILL: Record<AccentVariant, string> = {
   cinnabar: "bg-cinnabar",
   neutral: "bg-faint",
 };
+
+function PersonZodiac({ zodiac }: { zodiac: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-sm text-faint">
+      <Image src={zodiacImageSrc(zodiac)} alt="" width={40} height={40} className="h-5 w-5 object-contain" />
+      {zodiac}
+    </span>
+  );
+}
 
 function CompatRow({ label, text, emphasize }: { label: string; text: string; emphasize?: boolean }) {
   return (
@@ -90,11 +106,13 @@ export function CompatResult({
         <div className="flex flex-wrap items-center gap-3">
           <span className="font-display text-lg text-ink">{nameA}</span>
           <Tag variant="neutral">{ELEMENT_LABEL[chartA.dayMaster.element]} Day Master</Tag>
+          <PersonZodiac zodiac={chartA.zodiac} />
           <span aria-hidden="true" className="text-faint">
             ×
           </span>
           <span className="font-display text-lg text-ink">{nameB}</span>
           <Tag variant="neutral">{ELEMENT_LABEL[chartB.dayMaster.element]} Day Master</Tag>
+          <PersonZodiac zodiac={chartB.zodiac} />
         </div>
       </div>
 

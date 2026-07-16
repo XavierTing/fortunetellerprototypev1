@@ -19,8 +19,17 @@
  * see globals.css's file header. `prefers-reduced-motion` already forces
  * near-zero animation duration globally, so reduced motion gets an instant
  * appearance for free, no extra branching needed here.
+ *
+ * Each ring also carries the element's AI-generated brush emblem
+ * (`/elements/{element}.png`, transparent) centered and faint behind the
+ * existing CJK glyph — a quiet texture, not a second focal point, so the
+ * glyph + ring stay the legible signature and the emblem only adds ink-wash
+ * character. `alt=""` (purely decorative, already covered by the chart's own
+ * `aria-label`) means a momentarily-missing file just paints nothing.
  */
+import Image from "next/image";
 import { cn } from "@/components/ui";
+import { elementImageSrc } from "@/lib/illustrations";
 import { dominantElement, ELEMENTS, ELEMENT_LABEL } from "@/lib/interpreter/five-elements";
 import type { Chart, Element } from "@/lib/interpreter/types";
 
@@ -83,6 +92,17 @@ export function ElementBalanceChart({ chart }: { chart: Chart }) {
                   />
                 )}
               </svg>
+              <Image
+                src={elementImageSrc(el)}
+                alt=""
+                aria-hidden="true"
+                width={96}
+                height={96}
+                className={cn(
+                  "pointer-events-none absolute top-1/2 left-1/2 h-[58%] w-[58%] -translate-x-1/2 -translate-y-1/2 object-contain",
+                  isDominant ? "opacity-40" : "opacity-25"
+                )}
+              />
               <span
                 className={cn(
                   "relative font-cjk leading-none",

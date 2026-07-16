@@ -20,7 +20,16 @@
  * `page.tsx` only imports `{ Hero }` from this file, so this internals-only
  * swap (R0's static placeholder → R1's interactive canvas) needed no
  * changes there.
+ *
+ * A low-opacity ink-wash backdrop (`/illustrations/hero.png`, an
+ * AI-generated atmospheric landscape) sits behind both the interactive
+ * canvas and its reduced-motion still, `object-cover`+`fill` so it reads as
+ * one composed scene at any hero height. If the file is momentarily absent
+ * (a parallel task generates it), `next/image` just 404s that one request —
+ * `alt=""` means browsers paint nothing rather than a broken-image glyph, so
+ * the hero degrades to "ink wash + 命 + seal" exactly as it did before.
  */
+import Image from "next/image";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { Seal } from "@/components/ui";
 
@@ -212,6 +221,14 @@ export function Hero() {
 
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <Image
+        src="/illustrations/hero.png"
+        alt=""
+        fill
+        loading="eager"
+        sizes="100vw"
+        className="-z-10 object-cover opacity-[0.2]"
+      />
       {reducedMotion ? <StaticInkWash /> : <InkTrail />}
       <span
         className="absolute top-1/2 right-[6%] -translate-y-1/2 translate-x-[8%] font-brush leading-none text-ink/[0.05] select-none"

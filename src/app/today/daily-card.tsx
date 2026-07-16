@@ -8,9 +8,16 @@
  * `id="daily-fortune-card"` marks the single element a later share-image
  * task can target — headline, body, energy, and the lean-into/go-easy-on
  * pair all live inside this one structurally stable container.
+ *
+ * The header also carries a small brush emblem of today's own branch
+ * animal (`today.parsed.branchAnimal`, e.g. "Rat") beside the stem/branch
+ * caption that already names it in text — `alt=""` since it's decorative
+ * reinforcement of copy that's already there.
  */
+import Image from "next/image";
 import { Card, Tag } from "@/components/ui";
 import type { AccentVariant } from "@/components/ui";
+import { zodiacImageSrc } from "@/lib/illustrations";
 import type { ElementRelation } from "@/lib/interpreter/five-elements";
 import { ELEMENT_LABEL } from "@/lib/interpreter/five-elements";
 import type { DailyFortune } from "@/lib/interpreter/types";
@@ -69,6 +76,13 @@ export function DailyCard({
             {today.parsed.stem}
             {today.parsed.branch}
           </span>
+          <Image
+            src={zodiacImageSrc(today.parsed.branchAnimal)}
+            alt=""
+            width={56}
+            height={56}
+            className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
+          />
           <span className="text-xs leading-tight text-muted">
             {today.parsed.stemPinyin} {today.parsed.branchPinyin} · {ELEMENT_LABEL[today.parsed.stemElement]} over{" "}
             {ELEMENT_LABEL[today.parsed.branchElement]} · {today.parsed.branchAnimal} day

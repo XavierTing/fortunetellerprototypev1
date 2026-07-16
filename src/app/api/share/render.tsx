@@ -60,12 +60,45 @@
  * embedded typeface. A follow-up could vendor real Latin .ttf files under
  * `public/fonts/` and pass them via the `fonts` option for exact on-brand
  * typography.
+ *
+ * Illustration note (ART-WIRING task): `ImageResponse`/Satori has no access
+ * to Next's `/public` URL space the way a browser does — a bare
+ * `src="/illustrations/share-motif.png"` renders nothing. So raster art is
+ * read straight off disk at request time (`fs.readFileSync` against
+ * `public/...`) and re-embedded as a base64 `data:image/png;base64,...`
+ * `<img>`. A parallel task is still generating these exact files, so every
+ * read is wrapped in try/catch via `readPublicPngDataUri` below — a missing
+ * or unreadable file returns `undefined` and the caller renders no `<img>`
+ * at all, never a crash.
  */
+import fs from "node:fs";
+import path from "node:path";
 import type { CSSProperties } from "react";
 import { ImageResponse } from "next/og";
+import { zodiacSlug } from "@/lib/illustrations";
 import { ELEMENTS, ELEMENT_LABEL } from "@/lib/interpreter/five-elements";
 import type { ElementRelation } from "@/lib/interpreter/five-elements";
 import type { Element } from "@/lib/interpreter/types";
+
+/**
+ * Reads a PNG from `public/...` and returns a base64 data URI, or
+ * `undefined` if the file doesn't exist (yet) or can't be read — see the
+ * "Illustration note" above. Never throws.
+ */
+function readPublicPngDataUri(...segments: string[]): string | undefined {
+  try {
+    const buf = fs.readFileSync(path.join(process.cwd(), "public", ...segments));
+    return `data:image/png;base64,${buf.toString("base64")}`;
+  } catch {
+    return undefined;
+  }
+}
+
+/** `/public/zodiac/{name}.png` → data URI, or `undefined` if not (yet) present or `zodiac` is empty. */
+function zodiacDataUri(zodiac: string): string | undefined {
+  if (!zodiac) return undefined;
+  return readPublicPngDataUri("zodiac", `${zodiacSlug(zodiac)}.png`);
+}
 
 export const SHARE_SIZES = {
   /** Link-preview / Open Graph card (Slack, iMessage, Twitter/X, Facebook). */
@@ -109,10 +142,12 @@ function truncate(value: string, max: number): string {
 
 function outerStyle(isStory: boolean): CSSProperties {
   return {
+    position: "relative",
     width: "100%",
     height: "100%",
     display: "flex",
     flexDirection: "column",
+    overflow: "hidden",
     backgroundColor: SHARE_COLORS.paper,
     padding: isStory ? "76px 68px" : "60px 72px",
     fontFamily: "sans-serif",
@@ -249,6 +284,44 @@ function PersonChip({ name, dayMaster, large }: { name: string; dayMaster: strin
   );
 }
 
+/**
+ * ShareMotif — a subtle ink-wash corner accent (`/illustrations/share-motif.png`,
+ * paper-toned) bled to the bottom-right corner of the outer washi ground, at
+ * low opacity, behind the opaque `panelStyle` panel every card renders on
+ * top of — deliberately quiet texture, not a background-image "look at me"
+ * moment (DESIGN.md's restraint doctrine applies just as much to a raster
+ * share card as to the live UI). Renders nothing at all when the source
+ * file isn't present yet.
+ */
+function ShareMotif() {
+  const src = readPublicPngDataUri("illustrations", "share-motif.png");
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      alt=""
+      width={420}
+      height={420}
+      style={{ position: "absolute", right: 0, bottom: 0, width: 420, height: 420, opacity: 0.16, objectFit: "cover" }}
+    />
+  );
+}
+
+/** A small brush emblem of a zodiac animal, embedded as a base64 PNG. Renders nothing when the source file isn't present yet or `zodiac` is empty. */
+function ZodiacGlyph({ zodiac, size }: { zodiac: string; size: number }) {
+  const src = zodiacDataUri(zodiac);
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      alt=""
+      width={size}
+      height={size}
+      style={{ display: "flex", width: size, height: size, objectFit: "contain", opacity: 0.92 }}
+    />
+  );
+}
+
 export interface CompatCardData {
   nameA: string;
   nameB: string;
@@ -275,6 +348,7 @@ export function renderCompatibilityCard(data: CompatCardData, sizeKey: ShareSize
   return new ImageResponse(
     (
       <div style={outerStyle(isStory)}>
+        <ShareMotif />
         <div style={panelStyle(isStory)}>
           <BrandRow label="Compatibility Reading" />
 
@@ -390,6 +464,7 @@ export function renderReadingCard(data: ReadingCardData, sizeKey: ShareSizeKey =
   return new ImageResponse(
     (
       <div style={outerStyle(isStory)}>
+        <ShareMotif />
         <div style={panelStyle(isStory)}>
           <BrandRow label="Natal Reading" />
 
@@ -406,6 +481,7 @@ export function renderReadingCard(data: ReadingCardData, sizeKey: ShareSizeKey =
                 <SealMark size={isStory ? 188 : 132} fontSize={isStory ? 46 : 34}>
                   {ELEMENT_ABBR[data.dayMasterElement]}
                 </SealMark>
+                {data.zodiac ? <ZodiacGlyph zodiac={data.zodiac} size={isStory ? 56 : 44} /> : null}
                 <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: isStory ? 820 : 620 }}>
                   <span
                     style={{
@@ -525,6 +601,7 @@ export function renderDailyCard(data: DailyCardData, sizeKey: ShareSizeKey = "og
   return new ImageResponse(
     (
       <div style={outerStyle(isStory)}>
+        <ShareMotif />
         <div style={panelStyle(isStory)}>
           <BrandRow label="Daily Fortune" />
 
@@ -541,6 +618,7 @@ export function renderDailyCard(data: DailyCardData, sizeKey: ShareSizeKey = "og
                 <SealMark size={isStory ? 188 : 132} fontSize={isStory ? 36 : 27}>
                   {animalTag}
                 </SealMark>
+                {data.branchAnimal ? <ZodiacGlyph zodiac={data.branchAnimal} size={isStory ? 56 : 44} /> : null}
                 <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: isStory ? 820 : 620 }}>
                   <span
                     style={{

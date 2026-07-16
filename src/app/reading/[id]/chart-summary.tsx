@@ -10,8 +10,15 @@
  * the reading's): the day master's own stem character, rendered quiet and
  * large beside "Your Four Pillars," a small calligraphic signature next to
  * the chart it belongs to.
+ *
+ * The "Year of the {zodiac}" line carries a small brush emblem of the
+ * animal itself (`/zodiac/{name}.png`, transparent) — a quiet visual anchor
+ * for readers who don't parse the English zodiac name on sight. `alt=""`
+ * since the name is already spelled out right beside it in real text.
  */
+import Image from "next/image";
 import { Tag } from "@/components/ui";
+import { zodiacImageSrc } from "@/lib/illustrations";
 import type { Chart } from "@/lib/interpreter/types";
 
 const PILLAR_COLUMNS = [
@@ -27,8 +34,17 @@ export function ChartSummary({ chart }: { chart: Chart }) {
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div className="flex flex-col gap-1.5">
           <h2 className="font-display text-xl font-medium text-ink">Your Four Pillars</h2>
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-faint">
-            Year of the {chart.zodiac} · {chart.dayMaster.stemPinyin} {chart.dayMaster.stem} Day Master
+          <p className="flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-faint">
+            <Image
+              src={zodiacImageSrc(chart.zodiac)}
+              alt=""
+              width={48}
+              height={48}
+              className="h-6 w-6 shrink-0 object-contain"
+            />
+            <span>
+              Year of the {chart.zodiac} · {chart.dayMaster.stemPinyin} {chart.dayMaster.stem} Day Master
+            </span>
           </p>
         </div>
         <span
