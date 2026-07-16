@@ -1,0 +1,16 @@
+# Netlify configuration for the Cinnabar Next.js app.
+# The official Next.js runtime turns SSR pages + API routes into Netlify
+# Functions. Environment variables (DEEPSEEK_API_KEY, DATABASE_URL,
+# TURSO_AUTH_TOKEN, DEEPSEEK_BASE_URL) are set in the Netlify UI — never here,
+# never in git. See DEPLOY-NETLIFY.md.
+
+[build]
+  # `npm run build` runs `prisma generate && next build` (see package.json).
+  command = "npm run build"
+
+[build.environment]
+  # Next.js 16 needs a modern Node runtime; match local (Node 22).
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
