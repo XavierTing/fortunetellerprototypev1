@@ -85,7 +85,7 @@ export function ChatPanel({
         // the outer catch below (see src/lib/rate-limit.ts).
         if (res.status === 429) {
           const body = (await res.json().catch(() => null)) as { message?: string } | null;
-          throw new Error(body?.message ?? "The 师傅 needs a moment — you're asking rather quickly. Try again shortly.");
+          throw new Error(body?.message ?? "The Master needs a moment — you're asking quite quickly. Try again shortly.");
         }
         throw new Error(`request failed: ${res.status}`);
       }
@@ -119,7 +119,7 @@ export function ChatPanel({
             const { message } = JSON.parse(parsed.data) as { message?: string };
             settled = true;
             settleAssistant();
-            setErrorMessage(message ?? "The 师傅 stumbled over that one. Please try again.");
+            setErrorMessage(message ?? "The Master stumbled over that one. Please try again.");
             setStatus("error");
           }
         }
@@ -131,7 +131,7 @@ export function ChatPanel({
       }
     } catch (err) {
       settleAssistant();
-      setErrorMessage(err instanceof Error ? err.message : "The thread went quiet while the 师傅 was replying. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : "The connection dropped while the Master was replying. Please try again.");
       setStatus("error");
     }
   }

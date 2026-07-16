@@ -23,7 +23,7 @@ export function AssistantBubble({ content, pending }: { content: string; pending
         {content ? (
           <p className="whitespace-pre-wrap text-[0.95rem] leading-relaxed text-text">{content}</p>
         ) : (
-          <span className="sr-only">The 师傅 is considering…</span>
+          <span className="sr-only">The Master is considering…</span>
         )}
         {pending && (
           <span aria-hidden="true" className="mt-2 inline-flex gap-1">
@@ -59,8 +59,8 @@ export function EmptyChatIntro({
   return (
     <div className="animate-rise-in flex flex-col gap-5 border-y border-hairline py-10">
       <p className="max-w-[56ch] text-[1.02rem] leading-relaxed text-muted">
-        Ask anything — your Day Master, your favorable elements, timing, the shape of a relationship. The 师傅
-        answers only from your own pillars, never a generic horoscope.
+        Ask anything — your Day Master, your favorable elements, timing, the shape of a relationship. The Master
+        answers only from your own chart, never a generic horoscope.
       </p>
       <div className="flex flex-wrap gap-2.5">
         {prompts.map((p) => (

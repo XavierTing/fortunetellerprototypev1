@@ -120,7 +120,7 @@ export function BirthForm() {
           htmlFor="time"
           hint={
             timeUnknown
-              ? "We'll compute your day pillar precisely; hour-based detail won't be available."
+              ? "We'll still read your birth day precisely — you'll just miss the hour-based detail."
               : state.fieldErrors?.time
           }
         >
@@ -150,7 +150,7 @@ export function BirthForm() {
       <Field
         label="Gender"
         htmlFor="gender-male"
-        hint="Used to determine your luck-cycle (大运) direction in traditional BaZi — the sequence runs forward or backward depending on gender and your birth year. Not shown anywhere else."
+        hint="Used only to set the direction of your luck cycles, as traditional BaZi requires. It runs forward or backward depending on gender and birth year, and it's never shown anywhere else."
       >
         <div className="flex items-center gap-5">
           <label className="flex items-center gap-2 text-sm text-text">

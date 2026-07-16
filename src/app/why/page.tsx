@@ -5,30 +5,30 @@ import { Button, Card, Eyebrow, Seal, Section, SectionHead } from "@/components/
 export const metadata: Metadata = {
   title: "Why not just ask ChatGPT? · Cinnabar",
   description:
-    "A written trust page: why a deterministic chart engine and a chart-grounded, anti-sycophancy voice beat asking a general chatbot for your BaZi reading.",
+    "Why a real calendar engine and an honest, chart-grounded voice beat asking a general chatbot for your BaZi reading.",
 };
 
 const COMPARISON_ROWS = [
   {
     title: "Your chart itself",
     generic:
-      "Guesses your pillars from whatever you type — no verified calendar library, no timezone/DST math. PRD's own study found AI chat 排盘 accuracy running roughly 50–70%.",
+      "Guesses your pillars from whatever you type — no verified calendar library, no timezone/DST math. Independent testing puts general-chatbot chart-casting accuracy at only about 50–70%.",
     cinnabar:
-      "Computed in code by a dedicated engine before any model sees your data — lunar conversion, true solar time, and historical DST resolved deterministically, not guessed at.",
+      "Computed in code by a dedicated engine before any AI sees your data — lunar calendar, true solar time, and daylight-saving history worked out exactly, not guessed at.",
   },
   {
     title: "Timezone & true solar time",
     generic:
-      "Asks you to know and type your own UTC offset, or silently assumes one — the exact \"pick your timezone by hand\" hack that trips up Western-born users.",
+      "Expects you to know and type your own timezone offset, or silently assumes one — the exact manual step most people get wrong.",
     cinnabar:
-      "Resolves your IANA timezone and historical DST from the place you were born, then corrects for true solar time from your longitude — automatically, every time.",
+      "Works out your timezone and its daylight-saving history from the place you were born, then corrects for true solar time — automatically, every time.",
   },
   {
     title: "Consistency, message to message",
     generic:
       "Every reply re-derives your chart from scratch inside the conversation. Ask twice, phrase it differently, and the \"facts\" can quietly drift.",
     cinnabar:
-      "One chart, computed once, cached, and handed to every card and every chat reply as ground truth. The model interprets it — it never re-invents it.",
+      "One chart, computed once, saved, and handed to every card and every chat reply as fact. The AI interprets it — it never re-invents it.",
   },
   {
     title: "Honesty about you",
@@ -40,9 +40,9 @@ const COMPARISON_ROWS = [
   {
     title: "The voice",
     generic:
-      "Sinicized calendar terms translated literally, or a wall of jargon dropped with no gloss — reads like Chinese metaphysics run through a translator.",
+      "Chinese calendar terms translated word-for-word, or a wall of jargon with no explanation — it reads like it's been run through a translator.",
     cinnabar:
-      "Plain English first, always. Pinyin and 干支 terms live in an optional \"the mechanics ⓘ\" expander, glossed every time they appear.",
+      "Plain English first, always. Pinyin and Chinese terms live in an optional \"the mechanics ⓘ\" section, explained every time they appear.",
   },
 ] as const;
 
@@ -67,8 +67,8 @@ export default function WhyPage() {
           <p className="max-w-[62ch] text-[1.08rem] leading-relaxed text-muted">
             You can. People do, constantly — and most of the time the chart it hands back is quietly wrong. A
             general chatbot is a language model with no calendar library, no timezone database, and no memory of
-            what it told you five minutes ago. Cinnabar splits the job in two: a small, boring, deterministic
-            program does the arithmetic, and a language model only ever explains what the arithmetic already found.
+            what it told you five minutes ago. Cinnabar splits the job in two: a small, boring program does the
+            arithmetic, and the AI only ever explains what the arithmetic already found.
           </p>
         </div>
       </Section>
@@ -76,7 +76,7 @@ export default function WhyPage() {
       <Section className="border-t border-hairline py-20">
         <SectionHead
           title="Calculated, not guessed"
-          sub="八字 is a real calendar system with real rules — 节气 boundaries, a sexagenary cycle, hour pillars that flip on the true solar minute. That's arithmetic, not vibes."
+          sub="BaZi (八字) is a real calendar system with real rules — solar-term boundaries, a 60-year cycle, hour pillars that flip on the exact solar minute. That's arithmetic, not vibes."
         />
         <div className="mt-10 flex flex-col divide-y divide-hairline border-y border-hairline">
           <div
@@ -87,8 +87,8 @@ export default function WhyPage() {
               Lunar calendar
             </span>
             <p className="max-w-[56ch] text-sm leading-relaxed text-muted">
-              Pillars are derived from a proven calendrical library, not pattern-matched from a birthday a model has
-              seen a thousand similar ones of.
+              Your pillars come from a proven calendar library — not from an AI guessing off birthdays that look
+              like yours.
             </p>
           </div>
           <div
@@ -99,8 +99,8 @@ export default function WhyPage() {
               Timezone &amp; DST
             </span>
             <p className="max-w-[56ch] text-sm leading-relaxed text-muted">
-              Your birthplace resolves to an IANA timezone and its actual historical daylight-saving rules —
-              automatically, the moment you pick a city.
+              Your birthplace tells us your timezone and its actual daylight-saving history — automatically, the
+              moment you pick a city.
             </p>
           </div>
           <div
@@ -121,19 +121,19 @@ export default function WhyPage() {
       <Section className="border-t border-hairline py-20">
         <SectionHead
           title="Honest, chart-grounded readings"
-          sub="The model never invents a pillar, an element count, or a luck-pillar date — those come from the engine as ground truth. All it does is explain them, and it's told, explicitly, not to flatter you."
+          sub="The AI never invents a pillar, an element count, or a date — those come straight from the engine. All it does is explain them, and it's told, explicitly, not to flatter you."
         />
         <div className="mt-10 flex flex-col gap-6 border-y border-hairline py-2 divide-y divide-hairline">
           <p className="pt-6 max-w-[64ch] text-[1.02rem] leading-relaxed text-text">
             Ask a general chatbot the same question twice, phrased two different ways, and you can get two different
-            &ldquo;charts.&rdquo; Cinnabar computes your chart exactly once, caches it, and every card, every daily
-            fortune, and every reply from the 师傅 is grounded in that same JSON. Nothing gets re-derived, and
-            nothing quietly drifts.
+            &ldquo;charts.&rdquo; Cinnabar computes your chart exactly once, saves it, and every card, every daily
+            fortune, and every reply from the Master is grounded in that same saved chart. Nothing gets
+            recalculated, and nothing quietly drifts.
           </p>
           <p className="pt-6 max-w-[64ch] text-[1.02rem] leading-relaxed text-text">
-            The 师傅 is prompted against sycophancy on purpose: blind spots get named kindly, not flattered away, and
+            The Master is prompted against flattery on purpose: blind spots get named kindly, not flattered away, and
             an &ldquo;unlucky year&rdquo; gets reframed as something you can work with, not a verdict. Every reading
-            has to end on something you can actually do — agency over fate, by design (see PRD §9).
+            has to end on something you can actually do — agency over fate, by design.
           </p>
         </div>
       </Section>

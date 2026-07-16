@@ -66,7 +66,7 @@ export function ReadingStream({
 
     source.addEventListener("error", (event) => {
       const raw = (event as MessageEvent).data as string | undefined;
-      let message = "The reading hit a snag generating. Please refresh to try again.";
+      let message = "The reading hit a snag while generating. Please refresh to try again.";
       if (raw) {
         try {
           message = (JSON.parse(raw) as { message?: string }).message ?? message;
@@ -152,10 +152,10 @@ export function ReadingStream({
       {status === "done" && cards.length > 0 && (
         <PaywallSlot
           label="Full natal book"
-          note="Free tier: this reading, in full. Unlocked here — a future paywall boundary, not enforced."
+          note="Your full reading is free in this prototype — a paid tier would start below this line."
         >
           <p className="max-w-[60ch] text-sm leading-relaxed text-muted">
-            The complete natal book — a year-by-year 大运 walkthrough and a downloadable keepsake — would sit behind
+            The complete natal book — a year-by-year luck-cycle walkthrough and a downloadable keepsake — would sit behind
             this line in production. This prototype ships it wide open.
           </p>
         </PaywallSlot>

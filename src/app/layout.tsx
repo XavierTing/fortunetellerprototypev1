@@ -74,7 +74,7 @@ const maShanZheng = Ma_Shan_Zheng({
 export const metadata: Metadata = {
   title: "Cinnabar — Chinese astrology, in plain English",
   description:
-    "Authentic 八字 (BaZi) Chinese astrology, computed correctly and explained in plain, native English. Calculated, not guessed.",
+    "Authentic BaZi (八字) Chinese astrology, computed correctly and explained in plain, native English. Calculated, not guessed.",
 };
 
 export default function RootLayout({

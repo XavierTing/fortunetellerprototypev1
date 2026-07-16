@@ -11,7 +11,7 @@ import type { ChatWireMessage } from "./types";
 
 export const metadata: Metadata = {
   title: "The Master · Cinnabar",
-  description: "Chat with your 师傅 about your chart in plain English — grounded in your actual pillars.",
+  description: "Chat with the Master about your chart in plain English — grounded in your real chart.",
 };
 
 function isChatRole(role: string): role is "user" | "assistant" {
@@ -41,7 +41,7 @@ function EmptyState() {
             <span className="font-cjk">師傅</span> · The Master
           </Eyebrow>
           <h1 className="max-w-xl font-display text-[clamp(2.25rem,5vw,3.5rem)] font-light leading-[1.05] tracking-[-0.015em] text-ink">
-            The master keeps silence until there is a chart to read.
+            The Master keeps quiet until there&apos;s a chart to read.
           </h1>
         </div>
 
@@ -56,8 +56,8 @@ function EmptyState() {
             師
           </span>
           <p className="max-w-[52ch] text-[1.02rem] leading-relaxed text-muted">
-            Every word he offers is drawn from your own pillars — there is nothing yet to draw from. Cast your chart
-            once, free and in under a minute, and the conversation can begin.
+            Everything the Master says comes straight from your own chart — and there&apos;s no chart yet. Create yours
+            first, and the conversation can begin.
           </p>
           <Button href="/reading/new">
             Reveal your chart <span aria-hidden="true">→</span>
@@ -107,7 +107,7 @@ export default async function MasterPage() {
         </Eyebrow>
         <div className="flex items-start justify-between gap-6">
           <h1 className="max-w-2xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
-            Ask your <span className="font-cjk">师傅</span>.
+            Ask the Master.
           </h1>
           <span
             aria-hidden="true"

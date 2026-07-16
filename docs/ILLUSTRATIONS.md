@@ -342,26 +342,26 @@ real art you've generated) unless you pass `--force`.
 
 ## Checklist
 
-- [ ] `hero` -> `public/illustrations/hero.png`
-- [ ] `element-wood` -> `public/elements/wood.png`
-- [ ] `element-fire` -> `public/elements/fire.png`
-- [ ] `element-earth` -> `public/elements/earth.png`
-- [ ] `element-metal` -> `public/elements/metal.png`
-- [ ] `element-water` -> `public/elements/water.png`
-- [ ] `zodiac-rat` -> `public/zodiac/rat.png`
-- [ ] `zodiac-ox` -> `public/zodiac/ox.png`
-- [ ] `zodiac-tiger` -> `public/zodiac/tiger.png`
-- [ ] `zodiac-rabbit` -> `public/zodiac/rabbit.png`
-- [ ] `zodiac-dragon` -> `public/zodiac/dragon.png`
-- [ ] `zodiac-snake` -> `public/zodiac/snake.png`
-- [ ] `zodiac-horse` -> `public/zodiac/horse.png`
-- [ ] `zodiac-goat` -> `public/zodiac/goat.png`
-- [ ] `zodiac-monkey` -> `public/zodiac/monkey.png`
-- [ ] `zodiac-rooster` -> `public/zodiac/rooster.png`
-- [ ] `zodiac-dog` -> `public/zodiac/dog.png`
-- [ ] `zodiac-pig` -> `public/zodiac/pig.png`
-- [ ] `empty-master` -> `public/illustrations/empty-master.png`
-- [ ] `empty-today` -> `public/illustrations/empty-today.png`
-- [ ] `empty-me` -> `public/illustrations/empty-me.png`
-- [ ] `empty-match` -> `public/illustrations/empty-match.png`
-- [ ] `share-motif` -> `public/illustrations/share-motif.png`
+- [x] `hero` -> `public/illustrations/hero.png`
+- [x] `element-wood` -> `public/elements/wood.png`
+- [x] `element-fire` -> `public/elements/fire.png`
+- [x] `element-earth` -> `public/elements/earth.png`
+- [x] `element-metal` -> `public/elements/metal.png`
+- [x] `element-water` -> `public/elements/water.png`
+- [x] `zodiac-rat` -> `public/zodiac/rat.png`
+- [x] `zodiac-ox` -> `public/zodiac/ox.png`
+- [x] `zodiac-tiger` -> `public/zodiac/tiger.png`
+- [x] `zodiac-rabbit` -> `public/zodiac/rabbit.png`
+- [x] `zodiac-dragon` -> `public/zodiac/dragon.png`
+- [x] `zodiac-snake` -> `public/zodiac/snake.png`
+- [x] `zodiac-horse` -> `public/zodiac/horse.png`
+- [x] `zodiac-goat` -> `public/zodiac/goat.png`
+- [x] `zodiac-monkey` -> `public/zodiac/monkey.png`
+- [x] `zodiac-rooster` -> `public/zodiac/rooster.png`
+- [x] `zodiac-dog` -> `public/zodiac/dog.png`
+- [x] `zodiac-pig` -> `public/zodiac/pig.png`
+- [x] `empty-master` -> `public/illustrations/empty-master.png`
+- [x] `empty-today` -> `public/illustrations/empty-today.png`
+- [x] `empty-me` -> `public/illustrations/empty-me.png`
+- [x] `empty-match` -> `public/illustrations/empty-match.png`
+- [x] `share-motif` -> `public/illustrations/share-motif.png`

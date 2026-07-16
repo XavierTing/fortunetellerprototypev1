@@ -3,20 +3,25 @@ import { cn } from "./cn";
 import { Eyebrow } from "./eyebrow";
 
 /**
- * Section — page-level container: centered, max-width, responsive
- * gutters. The one scaffolding primitive every `/` page block should sit
- * inside instead of hand-rolling `mx-auto max-w-* px-*` per section.
+ * The one shared page-container class: centred, responsive max-width and
+ * gutters. Comfortable on laptops, grows on large/ultra-wide screens so
+ * content fills the viewport instead of floating in a narrow centred column
+ * (inner text keeps its own readable max-width). Exported so the sticky
+ * header lockup aligns to the exact same left edge as every Section — change
+ * the width here and the whole site (chrome included) stays aligned.
+ */
+export const SECTION_CONTAINER =
+  "mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-12 xl:max-w-[85rem] xl:px-16 2xl:max-w-[104rem] 2xl:px-24";
+
+/**
+ * Section — page-level container. The one scaffolding primitive every `/`
+ * page block should sit inside instead of hand-rolling `mx-auto max-w-* px-*`.
  */
 export function Section({
   className,
   ...rest
 }: ComponentPropsWithoutRef<"section">) {
-  return (
-    <section
-      className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)}
-      {...rest}
-    />
-  );
+  return <section className={cn(SECTION_CONTAINER, className)} {...rest} />;
 }
 
 interface SectionHeadProps {

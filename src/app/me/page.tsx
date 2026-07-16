@@ -169,7 +169,7 @@ export default async function MePage() {
             ))}
           </div>
         ) : (
-          <EmptyRow>No conversations yet — the 师傅 is only ever a question away.</EmptyRow>
+          <EmptyRow>No conversations yet — the Master is only ever a question away.</EmptyRow>
         )}
       </div>
 
@@ -206,9 +206,9 @@ export default async function MePage() {
       <div className="flex flex-col gap-4 border-t border-hairline pt-10">
         <h2 className="font-display text-xl font-medium text-ink">Privacy</h2>
         <p className="max-w-[56ch] text-sm leading-relaxed text-muted">
-          Cinnabar has no login — this data is tied only to an anonymous session on this device. Deleting it removes
-          your chart, every reading, every 师傅 conversation, and every compatibility check for this session,
-          permanently.
+          Cinnabar has no login — your data is tied only to an anonymous session on this device. Deleting it
+          permanently removes your chart, every reading, every Master conversation, and every compatibility check on
+          this device.
         </p>
         <DeleteDataButton action={deleteMyData} />
       </div>

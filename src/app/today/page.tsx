@@ -101,7 +101,7 @@ export default async function TodayPage() {
 
       <PaywallSlot
         label="Deep annual outlook"
-        note="Today's one-a-day card stays free forever. A longer-range 流年 forecast would live behind this marker."
+        note="Today's one-a-day card stays free forever. A longer-range annual forecast would live behind this marker."
       />
     </Section>
   );

@@ -142,7 +142,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ profileId:
       } catch (err) {
         console.error("master chat: generation failed", err);
         send("error", {
-          message: "The 师傅 hit a snag replying. Please try asking again.",
+          message: "The Master hit a snag replying. Please try asking again.",
         });
         closed = true;
         controller.close();

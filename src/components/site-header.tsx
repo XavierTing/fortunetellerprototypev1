@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Seal } from "@/components/ui";
+import { SECTION_CONTAINER } from "@/components/ui/section";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 /**
@@ -12,7 +13,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-hairline bg-paper/92 backdrop-blur supports-[backdrop-filter]:bg-paper/80 md:pl-20">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
+      <div className={`${SECTION_CONTAINER} flex h-16 items-center justify-between`}>
         <Link href="/" className="group flex items-center gap-3">
           <Seal
             aria-hidden="true"

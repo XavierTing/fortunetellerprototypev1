@@ -162,7 +162,7 @@ export function getClientIp(headersLike: Headers): string {
 export function rateLimitMessage(bucketName: RateLimitBucketName): string {
   switch (bucketName) {
     case "chat":
-      return "You're asking the 师傅 a lot of questions at once — give it a minute and try again.";
+      return "You're asking the Master a lot of questions at once — give it a minute and try again.";
     case "reading":
       return "You've generated a few readings in a row — give it a little while before casting another.";
     case "daily":

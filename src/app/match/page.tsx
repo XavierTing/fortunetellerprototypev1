@@ -36,9 +36,8 @@ export default async function MatchPage() {
           Who are you checking against?
         </h1>
         <p className="max-w-[58ch] text-[1.02rem] leading-relaxed text-muted">
-          Enter their birth date, time, and place — no account needed for them. We&apos;ll weigh both charts
-          together: your Day-Master element relation, branch harmonies and clashes across the two charts, and where
-          your elements complement or work against each other.
+          Enter their birth date, time, and place — no account needed for them. We&apos;ll read both charts together:
+          how your two Day Masters relate, where your elements click or clash, and what that means for the two of you.
         </p>
       </div>
 

@@ -15,7 +15,7 @@ import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui";
 
 const CONFIRM_MESSAGE =
-  "Delete all your saved data? This permanently removes your chart, readings, 师傅 conversations, and compatibility checks. This can't be undone.";
+  "Delete all your saved data? This permanently removes your chart, readings, Master conversations, and compatibility checks. This can't be undone.";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

@@ -35,9 +35,8 @@ export function TodayEmptyState() {
             Today&apos;s card is still blank.
           </h1>
           <p className="max-w-[54ch] text-[1.02rem] leading-relaxed text-muted">
-            Daily Fortune reads today&apos;s real day pillar against your own Day Master — there&apos;s nothing to
-            weigh it against yet. Cast your chart once, free and in under a minute, and a new card will be waiting
-            here every day after.
+            Daily Fortune reads today&apos;s energy against your own chart — but there&apos;s no chart to weigh it
+            against yet. Create yours first, and a fresh card will be waiting here every day after.
           </p>
         </div>
         <Button href="/reading/new">

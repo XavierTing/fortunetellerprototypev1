@@ -83,8 +83,8 @@ export function ReadingTeaser({ data }: { data: ReadingCardData | null }) {
           C
         </span>
         <p className="max-w-[52ch] text-[1.02rem] leading-relaxed text-muted">
-          Curious what your own chart says? Cinnabar computes an authentic 八字 chart — calculated, not guessed — then
-          has an AI voice interpret it in plain English. Free, no signup, under a minute.
+          Curious what your own chart says? Cinnabar builds a genuine BaZi (八字) chart — calculated, not guessed —
+          then has an AI read it in plain English. Free, no signup, under a minute.
         </p>
         <Button href="/reading/new">
           Create your own reading <span aria-hidden="true">→</span>

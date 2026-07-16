@@ -83,7 +83,7 @@ export function ChartSummary({ chart }: { chart: Chart }) {
       {!chart.pillars.hour && (
         <p className="max-w-[58ch] text-xs leading-relaxed text-faint">
           Birth time wasn&apos;t given, so the hour pillar is left out — the rest of the chart, and this reading,
-          degrade gracefully rather than guessing.
+          still work; they just don&apos;t guess at the missing hour.
         </p>
       )}
     </div>

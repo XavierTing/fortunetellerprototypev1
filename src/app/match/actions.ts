@@ -36,7 +36,7 @@ export interface CreateCompatibilityState {
   fieldErrors?: Partial<Record<"name" | "date" | "time" | "cityId", string>>;
 }
 
-const NO_SELF_PROFILE_ERROR = "Reveal your own chart first — compatibility needs a Day Master to weigh against.";
+const NO_SELF_PROFILE_ERROR = "Reveal your own chart first — compatibility needs your chart to compare theirs against.";
 
 export async function createCompatibility(
   _prevState: CreateCompatibilityState,

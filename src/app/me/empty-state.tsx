@@ -32,12 +32,11 @@ export function MeEmptyState() {
             <span className="font-cjk">我</span> · Me
           </Eyebrow>
           <h1 className="max-w-xl font-display text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.08] font-light tracking-[-0.015em] text-ink">
-            This becomes your home once there is a chart to keep.
+            This becomes your home once you have a chart to keep.
           </h1>
           <p className="max-w-[56ch] text-[1.02rem] leading-relaxed text-muted">
-            Cast your birth chart once, free and in under a minute, and this becomes your quiet index — your Day
-            Master at a glance, every past reading, every conversation with the master, every compatibility check,
-            gathered in one place.
+            Create your birth chart first, and this becomes your quiet index — your Day Master at a glance, every
+            past reading, every conversation with the Master, and every compatibility check, gathered in one place.
           </p>
         </div>
         <Button href="/reading/new">

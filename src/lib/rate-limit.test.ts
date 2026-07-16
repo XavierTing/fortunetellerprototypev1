@@ -146,7 +146,7 @@ describe("rateLimitedResponse", () => {
     expect(res.status).toBe(429);
     expect(res.headers.get("Retry-After")).toBe("5");
     const body = (await res.json()) as { message: string; retryAfterSeconds: number };
-    expect(body.message).toContain("师傅");
+    expect(body.message).toContain("Master");
     expect(body.retryAfterSeconds).toBe(5);
   });
 });

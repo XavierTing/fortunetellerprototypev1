@@ -7,7 +7,7 @@ const FEATURES = [
     href: "/master",
     glyph: "師",
     title: "Ask the Master",
-    body: "Chat with your 师傅 about your chart in plain English — grounded in your actual pillars, never generic horoscope filler.",
+    body: "Chat with the Master about your chart in plain English — grounded in your real chart, never generic horoscope filler.",
   },
   {
     href: "/today",
@@ -38,7 +38,7 @@ export default function HomePage() {
             interactive canvas without touching this page's copy. */}
         <Hero />
 
-        <Section className="flex flex-col gap-8 py-28 sm:py-40">
+        <Section className="flex flex-col gap-6 py-20 sm:py-24">
           <div className="animate-rise-in flex items-center gap-3">
             <Eyebrow>
               <span className="font-cjk">八字</span> · Four Pillars
@@ -65,11 +65,11 @@ export default function HomePage() {
             className="animate-rise-in max-w-[34rem] text-[1.02rem] leading-[1.8] text-muted"
             style={{ animationDelay: "230ms" }}
           >
-            Every reading begins with your exact birth date, time, and
-            place — resolved to true solar time, not a rounded-off
-            horoscope. Four Pillars, computed correctly, and read the way a
-            quiet, honest teacher would: no jargon walls, no doom, no
-            crystal balls.
+            Every reading starts with your exact birth date, time, and
+            place — corrected to the real position of the sun where you were
+            born, not a one-size-fits-all horoscope. Your chart is
+            calculated properly, then read the way a calm, honest teacher
+            would: no jargon, no doom, no crystal balls.
           </p>
 
           <div
@@ -86,13 +86,13 @@ export default function HomePage() {
         </Section>
       </div>
 
-      <Section className="border-t border-hairline py-24">
+      <Section className="border-t border-hairline py-20">
         <SectionHead
           title="What Cinnabar reads"
-          sub="Four ways in, one grounded chart underneath."
+          sub="Four ways to explore one accurate chart."
         />
 
-        <div className="mt-12 flex flex-col divide-y divide-hairline border-y border-hairline">
+        <div className="mt-10 flex flex-col divide-y divide-hairline border-y border-hairline">
           {FEATURES.map((feature) => (
             <Link
               key={feature.href}
@@ -124,19 +124,18 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <Section id="reveal" className="scroll-mt-24 border-t border-hairline py-24">
-        <Card className="flex flex-col gap-9 p-8 sm:p-12">
+      <Section id="reveal" className="scroll-mt-24 border-t border-hairline py-20">
+        <Card className="flex flex-col gap-8 p-8 sm:p-12">
           <div className="flex flex-col gap-4">
             <Badge variant="jade">Free · no signup needed</Badge>
             <h2 className="font-display text-[clamp(1.9rem,3vw,2.5rem)] leading-tight font-medium text-ink">
               Your birth-chart form takes under a minute.
             </h2>
             <p className="max-w-2xl text-[1.02rem] leading-relaxed text-muted">
-              Name (optional), your exact birth date &amp; time — or &ldquo;I
-              don&apos;t know my time&rdquo; — and a place. We resolve the
-              timezone, historical DST, and true solar time automatically, so
-              two people born at the same civil hour on opposite sides of the
-              world get correctly different charts.
+              Just your name (optional), your birth date and time, and where
+              you were born. We handle the timezone, daylight saving, and true
+              solar time for you — so two people born at the same clock time in
+              different places get the correct, different charts.
             </p>
           </div>
 

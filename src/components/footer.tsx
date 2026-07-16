@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Seal } from "@/components/ui";
+import { SECTION_CONTAINER } from "@/components/ui/section";
 
 /**
  * Global footer: brand lockup, a handful of links (the trust page, the four
@@ -20,7 +21,7 @@ const FOOTER_LINKS = [
 export function Footer() {
   return (
     <footer className="border-t border-hairline bg-paper pb-24 md:pb-0 md:pl-20">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-7 px-5 py-12 sm:px-8">
+      <div className={`${SECTION_CONTAINER} flex flex-col gap-7 py-12`}>
         <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4">
           <Link href="/" className="group flex items-center gap-2.5">
             <Seal
@@ -49,8 +50,7 @@ export function Footer() {
         <div className="flex flex-col gap-3 border-t border-hairline pt-7 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-xl text-xs leading-relaxed text-faint">
             Fortune-telling content is for entertainment and self-reflection, not professional, medical, legal, or
-            financial advice. Cinnabar computes your chart deterministically and has a language model interpret
-            it —{" "}
+            financial advice. Cinnabar calculates your chart in code and has an AI interpret it —{" "}
             <Link href="/why" className="text-faint underline decoration-hairline underline-offset-2 hover:text-cinnabar">
               here&apos;s why that&apos;s different
             </Link>
